@@ -1,6 +1,6 @@
 package http
 
-type Code int
+type Code uint
 
 const (
 	SUCCESS                 Code = 0

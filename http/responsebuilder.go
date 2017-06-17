@@ -2,14 +2,14 @@ package http
 
 type responseBuilder struct {
 	response response
-	context  *Context
+	context  Context
 }
 
 type Builder interface {
 	Send()
 
-	Code(code int) Builder
-	WithCode(code int) Builder
+	Status(status int) Builder
+	WithStatus(status int) Builder
 
 	Message(message string) Builder
 	WithMessage(message string) Builder
@@ -17,8 +17,8 @@ type Builder interface {
 	Data(data interface{}) Builder
 	WithData(data interface{}) Builder
 
-	MessageCode(code Code) Builder
-	WithMessageCode(code Code) Builder
+	Code(code Code) Builder
+	WithCode(code Code) Builder
 
 	Fail() Builder
 	Success() Builder
@@ -26,7 +26,7 @@ type Builder interface {
 }
 
 
-func Respond(c *Context) Builder {
+func Respond(c Context) Builder {
 	return responseBuilder{
 		response: response{
 			Success:     true,
@@ -37,13 +37,13 @@ func Respond(c *Context) Builder {
 	}
 }
 
-func (rb responseBuilder) Status(code int) Builder {
-	return rb.WithStatus(code)
+func (rb responseBuilder) Status(status int) Builder {
+	return rb.WithStatus(status)
 }
 
-func (rb responseBuilder) WithStatus(code int) Builder {
-	rb.response.Code = code
-	if code > 299 || code < 200 {
+func (rb responseBuilder) WithStatus(status int) Builder {
+	rb.response.Status = status
+	if status > 299 || status < 200 {
 		return rb.Fail()
 	}
 	return rb
@@ -90,5 +90,5 @@ func (rb responseBuilder) WithSuccess(success bool) Builder {
 }
 
 func (rb responseBuilder) Send() {
-	rb.context.JSON(rb.response.Code, rb.response)
+	rb.context.JSON(rb.response.Status, rb.response)
 }
