@@ -14,15 +14,13 @@
  limitations under the License.
 */
 
-package handler
+package common
 
-import (
-	"github.com/gin-gonic/gin"
-	"github.com/pufferpanel/apufferi/logging"
-)
-
-func ApiLogging() gin.HandlerFunc  {
-	return func(c *gin.Context) {
-		logging.Debugf("[%s] [%s]", c.Request.Method, c.Request.RequestURI)
+func ContainsValue(arr []string, value string) bool {
+	for _, v := range arr {
+		if v == value {
+			return true
+		}
 	}
+	return false
 }

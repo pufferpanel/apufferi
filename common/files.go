@@ -14,15 +14,19 @@
  limitations under the License.
 */
 
-package handler
+package common
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/pufferpanel/apufferi/logging"
+	"path/filepath"
+	"strings"
 )
 
-func ApiLogging() gin.HandlerFunc  {
-	return func(c *gin.Context) {
-		logging.Debugf("[%s] [%s]", c.Request.Method, c.Request.RequestURI)
-	}
+func JoinPath(paths ...string) string {
+	result, _ := filepath.Abs(filepath.Join(paths...))
+	return result
+}
+
+func EnsureAccess(source string, prefix string) bool {
+	abs, _ := filepath.Abs(source)
+	return strings.HasPrefix(abs, prefix)
 }

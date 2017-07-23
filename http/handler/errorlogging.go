@@ -3,7 +3,7 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/pufferpanel/apufferi/http"
-	"github.com/pufferpanel/pufferd/logging"
+	"github.com/pufferpanel/apufferi/logging"
 	"runtime/debug"
 )
 

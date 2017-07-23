@@ -14,15 +14,17 @@
  limitations under the License.
 */
 
-package handler
+package cache
 
-import (
-	"github.com/gin-gonic/gin"
-	"github.com/pufferpanel/apufferi/logging"
-)
+type Cache interface {
+	Read() (cache []string, epoch int64)
 
-func ApiLogging() gin.HandlerFunc  {
-	return func(c *gin.Context) {
-		logging.Debugf("[%s] [%s]", c.Request.Method, c.Request.RequestURI)
-	}
+	ReadFrom(startTime int64) (cache []string, epoch int64)
+
+	Write(b []byte) (n int, err error)
+}
+
+type Message struct {
+	msg  string
+	time int64
 }

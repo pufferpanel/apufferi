@@ -14,15 +14,25 @@
  limitations under the License.
 */
 
-package handler
+package common
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/pufferpanel/apufferi/logging"
+	"fmt"
+	"strings"
 )
 
-func ApiLogging() gin.HandlerFunc  {
-	return func(c *gin.Context) {
-		logging.Debugf("[%s] [%s]", c.Request.Method, c.Request.RequestURI)
+func ReplaceTokens(msg string, mapping map[string]interface{}) string {
+	newmsg := msg
+	for key, value := range mapping {
+		newmsg = strings.Replace(newmsg, "${"+key+"}", fmt.Sprint(value), -1)
 	}
+	return newmsg
+}
+
+func ReplaceTokensInArr(msg []string, mapping map[string]interface{}) []string {
+	newarr := make([]string, len(msg))
+	for index, element := range msg {
+		newarr[index] = ReplaceTokens(element, mapping)
+	}
+	return newarr
 }
