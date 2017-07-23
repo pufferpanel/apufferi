@@ -25,13 +25,12 @@ type Builder interface {
 	WithSuccess(success bool) Builder
 }
 
-
 func Respond(c Context) Builder {
 	return responseBuilder{
 		response: response{
-			Success:     true,
-			Status:        200,
-			Code: SUCCESS,
+			Success: true,
+			Status:  200,
+			Code:    SUCCESS,
 		},
 		context: c,
 	}

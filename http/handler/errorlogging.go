@@ -1,10 +1,11 @@
 package handler
 
 import (
+	"runtime/debug"
+
 	"github.com/gin-gonic/gin"
 	"github.com/pufferpanel/apufferi/http"
 	"github.com/pufferpanel/apufferi/logging"
-	"runtime/debug"
 )
 
 func Recovery() gin.HandlerFunc {

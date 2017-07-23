@@ -21,8 +21,9 @@ import (
 	"io/ioutil"
 
 	"fmt"
-	"github.com/pufferpanel/apufferi/logging"
 	"strconv"
+
+	"github.com/pufferpanel/apufferi/logging"
 )
 
 var config map[string]interface{}
