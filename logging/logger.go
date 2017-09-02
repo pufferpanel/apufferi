@@ -40,11 +40,18 @@ var (
 )
 
 const (
-	logFileFolder  = "logs"
 	logFileName    = "2006-01-02T15-04-05.log"
 	formatNoData   = "[%s] [%s] %s\n"
 	formatWithData = "[%s] [%s] %s\n%v\n"
 )
+
+var (
+	logFileFolder = "logs"
+)
+
+func SetLogFolder(path string) {
+	logFileFolder = path
+}
 
 func Init() {
 	var err error
