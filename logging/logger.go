@@ -35,7 +35,7 @@ var (
 	WARN         level = level{scale: 63, display: "WARN"}
 	ERROR        level = level{scale: 127, display: "ERROR"}
 	CRITICAL     level = level{scale: 255, display: "CRITICAL"}
-	loggingLevel       = INFO
+	logLevel       = INFO
 	logFile      *os.File
 )
 
@@ -103,7 +103,7 @@ func Criticalf(msg string, data ...interface{}) {
 }
 
 func SetLevel(lvl level) {
-	loggingLevel = lvl
+	logLevel = lvl
 }
 
 func SetLevelByString(lvl string) {
@@ -152,7 +152,7 @@ func logf(lvl level, msg string, data ...interface{}) {
 }
 
 func logString(lvl level, output string) {
-	if lvl.scale >= loggingLevel.scale {
+	if lvl.scale >= logLevel.scale {
 		fmt.Print(output)
 	}
 	logFile.WriteString(output)
