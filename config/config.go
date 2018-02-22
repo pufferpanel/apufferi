@@ -41,6 +41,7 @@ func Load(path string) {
 	}
 }
 
+//Deprecated: Use the correct Get### function to get the type needed
 func Get(key string) string {
 	val := config[key]
 	if val == nil {
@@ -69,4 +70,85 @@ func GetOrDefault(key string, def string) string {
 		return def
 	}
 	return val
+}
+
+func GetString(key string) string {
+	val := get(key)
+
+	switch val.(type) {
+	case string:
+		return val.(string)
+	case int:
+		return strconv.Itoa(val.(int))
+	case bool:
+		if val.(bool) == true {
+			return "true"
+		} else {
+			return "false"
+		}
+	default:
+		return fmt.Sprintf("%v", val)
+	}
+}
+
+func GetStringOrDefault(key string, def string) string {
+	res := GetString(key)
+	if res == "" {
+		return def
+	} else {
+		return res
+	}
+}
+
+func GetInt(key string) int {
+	val := get(key)
+
+	cast, ok := val.(int)
+	if ok {
+		return cast
+	} else {
+		return 0
+	}
+}
+
+func GetIntOrDefault(key string, def int) int {
+	res := GetInt(key)
+
+	if res == 0 {
+		return def
+	} else {
+		return res
+	}
+}
+
+func GetBool(key string) bool {
+	val := get(key)
+
+	cast, ok := val.(bool)
+	if ok {
+		return cast
+	} else {
+		return false
+	}
+}
+
+func GetBoolOrDefault(key string, def bool) bool {
+	val := get(key)
+
+	switch val.(type) {
+	case string:
+		return def
+	case bool:
+		return val.(bool)
+	default:
+		return def
+	}
+}
+
+func get(key string) interface{}{
+	value := config[key]
+	if value == nil {
+		return ""
+	}
+	return value
 }
