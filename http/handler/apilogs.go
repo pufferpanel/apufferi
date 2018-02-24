@@ -23,6 +23,6 @@ import (
 
 func ApiLogging() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		logging.Debugf("[%s] [%s]", c.Request.Method, c.Request.RequestURI)
+		logging.Debugf("[%s] [%s] [%s]", c.Request.RemoteAddr, c.Request.Method, c.Request.RequestURI)
 	}
 }
