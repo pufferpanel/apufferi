@@ -40,7 +40,7 @@ func ReplaceTokensInArr(msg []string, mapping map[string]interface{}) []string {
 func ReplaceTokensInMap(msg map[string]string, mapping map[string]interface{}) map[string]string {
 	newmap := make(map[string]string, len(msg))
 	for k, v := range msg {
-		newmap[k] = ReplaceTokens(element, mapping)
+		newmap[k] = ReplaceTokens(v, mapping)
 	}
 	return newmap
 }
