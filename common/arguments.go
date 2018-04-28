@@ -36,3 +36,11 @@ func ReplaceTokensInArr(msg []string, mapping map[string]interface{}) []string {
 	}
 	return newarr
 }
+
+func ReplaceTokensInMap(msg map[string]string, mapping map[string]interface{}) map[string]string {
+	newarr := make(map[string]string, len(msg))
+	for index, element := range msg {
+		newarr[index] = ReplaceTokens(element, mapping)
+	}
+	return newarr
+}
