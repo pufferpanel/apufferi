@@ -84,7 +84,7 @@ func Critical(msg string, data ...interface{}) {
 }
 
 func Devel(msg string, data ...interface{}) {
-	log(CRITICAL, msg, data)
+	log(DEVEL, msg, data)
 }
 
 func Infof(msg string, data ...interface{}) {
