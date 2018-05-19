@@ -24,6 +24,7 @@ import (
 	"strconv"
 
 	"github.com/pufferpanel/apufferi/logging"
+	"strings"
 )
 
 var config map[string]interface{}
@@ -64,6 +65,7 @@ func Get(key string) string {
 	}
 }
 
+//Deprecated: Use the correct Get### function to get the type needed
 func GetOrDefault(key string, def string) string {
 	val := Get(key)
 	if val == "" {
@@ -145,9 +147,15 @@ func GetBoolOrDefault(key string, def bool) bool {
 	}
 }
 
-func get(key string) interface{}{
+func get(key string) interface{} {
 	value := config[key]
 	if value == nil {
+		value = config[strings.ToLower(key)]
+		if value == nil {
+			return ""
+		} else {
+			return value
+		}
 		return ""
 	}
 	return value

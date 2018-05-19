@@ -30,13 +30,14 @@ type level struct {
 }
 
 var (
-	DEBUG        level = level{scale: 7, display: "DEBUG"}
-	INFO         level = level{scale: 31, display: "INFO"}
-	WARN         level = level{scale: 63, display: "WARN"}
-	ERROR        level = level{scale: 127, display: "ERROR"}
-	CRITICAL     level = level{scale: 255, display: "CRITICAL"}
+	DEBUG    level = level{scale: 7, display: "DEBUG"}
+	INFO     level = level{scale: 31, display: "INFO"}
+	WARN     level = level{scale: 63, display: "WARN"}
+	ERROR    level = level{scale: 127, display: "ERROR"}
+	CRITICAL level = level{scale: 255, display: "CRITICAL"}
+	DEVEL    level = level{scale: 0, display: "DEVEL"}
 	logLevel       = INFO
-	logFile      *os.File
+	logFile  *os.File
 )
 
 const (
@@ -82,6 +83,10 @@ func Critical(msg string, data ...interface{}) {
 	log(CRITICAL, msg, data)
 }
 
+func Devel(msg string, data ...interface{}) {
+	log(CRITICAL, msg, data)
+}
+
 func Infof(msg string, data ...interface{}) {
 	logf(INFO, msg, data)
 }
@@ -102,6 +107,10 @@ func Criticalf(msg string, data ...interface{}) {
 	logf(CRITICAL, msg, data)
 }
 
+func Develf(msg string, data ...interface{}) {
+	logf(DEVEL, msg, data)
+}
+
 func SetLevel(lvl level) {
 	logLevel = lvl
 }
@@ -118,6 +127,8 @@ func SetLevelByString(lvl string) {
 		SetLevel(ERROR)
 	case "CRITICAL":
 		SetLevel(CRITICAL)
+	case "DEVEL":
+		SetLevel(DEVEL)
 	}
 }
 
