@@ -20,9 +20,6 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"fmt"
-	"strconv"
-
 	"github.com/pufferpanel/apufferi/logging"
 	"strings"
 )
@@ -42,96 +39,36 @@ func Load(path string) {
 	}
 }
 
-//Deprecated: Use the correct Get### function to get the type needed
-func Get(key string) string {
-	val := config[key]
-	if val == nil {
-		return ""
-	}
-
-	switch val.(type) {
-	case string:
-		return val.(string)
-	case int:
-		return strconv.Itoa(val.(int))
-	case bool:
-		if val.(bool) == true {
-			return "true"
-		} else {
-			return "false"
-		}
-	default:
-		return fmt.Sprintf("%v", val)
-	}
-}
-
-//Deprecated: Use the correct Get### function to get the type needed
-func GetOrDefault(key string, def string) string {
-	val := Get(key)
-	if val == "" {
-		return def
-	}
-	return val
-}
-
 func GetString(key string) string {
-	val := get(key)
-
-	switch val.(type) {
-	case string:
-		return val.(string)
-	case int:
-		return strconv.Itoa(val.(int))
-	case bool:
-		if val.(bool) == true {
-			return "true"
-		} else {
-			return "false"
-		}
-	default:
-		return fmt.Sprintf("%v", val)
-	}
+	return GetStringOrDefault(key, "")
 }
 
 func GetStringOrDefault(key string, def string) string {
-	res := GetString(key)
-	if res == "" {
-		return def
-	} else {
-		return res
+	res := get(key)
+
+	switch res.(type) {
+	case string:
+		return res.(string)
 	}
+	return def
 }
 
 func GetInt(key string) int {
-	val := get(key)
-
-	cast, ok := val.(int)
-	if ok {
-		return cast
-	} else {
-		return 0
-	}
+	return GetIntOrDefault(key, 0)
 }
 
 func GetIntOrDefault(key string, def int) int {
-	res := GetInt(key)
+	res := get(key)
 
-	if res == 0 {
-		return def
-	} else {
-		return res
+	switch res.(type) {
+	case int:
+		return res.(int)
 	}
+	return def
 }
 
 func GetBool(key string) bool {
-	val := get(key)
-
-	cast, ok := val.(bool)
-	if ok {
-		return cast
-	} else {
-		return false
-	}
+	return GetBoolOrDefault(key, false)
 }
 
 func GetBoolOrDefault(key string, def bool) bool {
@@ -139,6 +76,9 @@ func GetBoolOrDefault(key string, def bool) bool {
 
 	switch val.(type) {
 	case string:
+		if val.(string) == "true" {
+			return true
+		}
 		return def
 	case bool:
 		return val.(bool)
@@ -152,11 +92,11 @@ func get(key string) interface{} {
 	if value == nil {
 		value = config[strings.ToLower(key)]
 		if value == nil {
-			return ""
+			return nil
 		} else {
 			return value
 		}
-		return ""
+		return nil
 	}
 	return value
 }
