@@ -17,6 +17,8 @@
 package common
 
 import (
+	"github.com/pufferpanel/apufferi/logging"
+	"os"
 	"path/filepath"
 	"strings"
 )
@@ -27,6 +29,19 @@ func JoinPath(paths ...string) string {
 }
 
 func EnsureAccess(source string, prefix string) bool {
-	abs, _ := filepath.Abs(source)
-	return strings.HasPrefix(abs, prefix)
+	logging.Devel("Checking " + source)
+	replacement, err := filepath.EvalSymlinks(source)
+	if err != nil && !os.IsNotExist(err) {
+		logging.Devel("Error: " + err.Error())
+	} else if os.IsNotExist(err) {
+		replacement, err = filepath.Abs(source)
+		if err != nil {
+			logging.Devel("Error on ABS conversion for path: " + source)
+			logging.Devel(err.Error())
+			return false
+		}
+	}
+	logging.Devel("Result: " + replacement)
+
+	return strings.HasPrefix(replacement, prefix)
 }
