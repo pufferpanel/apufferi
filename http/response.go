@@ -6,7 +6,7 @@ type response struct {
 	Data     interface{} `json:"data,omitempty"`
 	Status   int         `json:"-"`
 	Code     Code        `json:"code,omitempty"`
-	Metadata *metadata    `json:"metadata,omitempty"`
+	Metadata *metadata   `json:"metadata,omitempty"`
 }
 
 type metadata struct {
@@ -17,4 +17,5 @@ type paging struct {
 	Page    uint `json:"page,omitempty"`
 	Size    uint `json:"pageSize,omitempty"`
 	MaxSize uint `json:"maxSize,omitempty"`
+	Total   uint `json:"total,omitempty"`
 }

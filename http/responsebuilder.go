@@ -24,8 +24,8 @@ type Builder interface {
 	Success() Builder
 	WithSuccess(success bool) Builder
 
-	PageInfo(page, pageSize, maxSize uint) Builder
-	WithPageInfo(page, pageSize, maxSize uint) Builder
+	PageInfo(page, pageSize, maxSize, total uint) Builder
+	WithPageInfo(page, pageSize, maxSize, total uint) Builder
 }
 
 func Respond(c Context) Builder {
@@ -95,17 +95,17 @@ func (rb *responseBuilder) Send() {
 	rb.context.JSON(rb.response.Status, rb.response)
 }
 
-func (rb *responseBuilder) PageInfo(page, pageSize, maxSize uint) Builder {
-	return rb.WithPageInfo(page, pageSize, maxSize)
+func (rb *responseBuilder) PageInfo(page, pageSize, maxSize, total uint) Builder {
+	return rb.WithPageInfo(page, pageSize, maxSize, total)
 }
 
-func (rb *responseBuilder) WithPageInfo(page, pageSize, maxSize uint) Builder {
-
+func (rb *responseBuilder) WithPageInfo(page, pageSize, maxSize, total uint) Builder {
 	rb.response.Metadata = &metadata{
 		Paging: &paging{
 			Page:    page,
 			Size:    pageSize,
 			MaxSize: maxSize,
+			Total:   total,
 		}}
 	return rb
 }
