@@ -14,6 +14,7 @@ func Recovery() gin.HandlerFunc {
 			if err := recover(); err != nil {
 				http.Respond(c).Fail().Status(500).Code(http.UNKNOWN).Message("unexpected error").Data(err).Send()
 				logging.Errorf("Error handling route\n%+v\n%s", err, debug.Stack())
+				c.Abort()
 			}
 		}()
 
