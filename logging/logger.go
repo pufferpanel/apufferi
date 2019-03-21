@@ -108,7 +108,7 @@ func logString(lvl *Level, output string) {
 	for _, v := range writers {
 		//log to this writer messages which are either the same level or higher, but not over the max
 		if lvl.GetScale() >= v.level.GetScale() && (v.ignore == nil || lvl.GetScale() < v.ignore.GetScale()) {
-			fmt.Fprintln(v.writer, output)
+			fmt.Fprint(v.writer, output)
 		}
 	}
 }
