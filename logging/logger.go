@@ -85,23 +85,26 @@ func Devel(msg string, data ...interface{}) {
 }
 
 func Log(lvl *Level, msg string, data ...interface{}) {
-	var dataLength = len(data[0].([]interface{}))
-	if data == nil || dataLength == 0 {
-		var output = fmt.Sprintf(formatNoData, getTimestamp(), lvl.GetName(), msg)
-		logString(lvl, output)
-	} else {
-		cast := make([]interface{}, 4)
-		cast[0] = getTimestamp()
-		cast[1] = lvl.GetName()
-		cast[2] = msg
-		if dataLength == 1 {
-			cast[3] = data[0].([]interface{})[0]
+	go func(lvl *Level, msg string, data ...interface{}) {
+		var dataLength = len(data[0].([]interface{}))
+		if data == nil || dataLength == 0 {
+			var output = fmt.Sprintf(formatNoData, getTimestamp(), lvl.GetName(), msg)
+			logString(lvl, output)
 		} else {
-			cast[3] = data[0].([]interface{})
+			cast := make([]interface{}, 4)
+			cast[0] = getTimestamp()
+			cast[1] = lvl.GetName()
+			cast[2] = msg
+			if dataLength == 1 {
+				cast[3] = data[0].([]interface{})[0]
+			} else {
+				cast[3] = data[0].([]interface{})
+			}
+			var output = fmt.Sprintf(formatWithData, cast...)
+			logString(lvl, output)
 		}
-		var output = fmt.Sprintf(formatWithData, cast...)
-		logString(lvl, output)
-	}
+	}(lvl, msg, data)
+
 }
 
 func logString(lvl *Level, output string) {
