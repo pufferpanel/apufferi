@@ -11,13 +11,13 @@
   limitations under the License.
  */
 
-package common
+package handler
 
-func ContainsValue(arr []string, value string) bool {
-	for _, v := range arr {
-		if v == value {
-			return true
-		}
-	}
-	return false
+//wrapper around gin so that we don't have to dep on it within this package explicitly
+type Middleware interface {
+	Abort()
+
+	Next()
+
+	JSON(code int, data interface{})
 }

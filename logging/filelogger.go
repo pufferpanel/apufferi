@@ -11,13 +11,29 @@
   limitations under the License.
  */
 
-package common
+package logging
 
-func ContainsValue(arr []string, value string) bool {
-	for _, v := range arr {
-		if v == value {
-			return true
-		}
+import (
+	"os"
+	"path"
+	"time"
+)
+
+func WithLogDirectory(directory string, lvl *Level, ignore *Level) (err error) {
+	if directory == "" {
+		directory = "logs"
 	}
-	return false
+
+	err = os.MkdirAll(directory, 0755)
+	if err != nil && !os.IsExist(err) {
+		return
+	}
+
+	file, err := os.OpenFile(path.Join(directory, time.Now().Format("2006-01-02T15-04-05.log")), os.O_WRONLY|os.O_CREATE, 0644)
+	if err != nil {
+		return
+	}
+
+	WithWriterIgnore(file, lvl, ignore)
+	return
 }

@@ -1,24 +1,21 @@
 /*
- Copyright 2016 Padduck, LLC
-
- Licensed under the Apache License, Version 2.0 (the "License");
- you may not use this file except in compliance with the License.
- You may obtain a copy of the License at
-
- 	http://www.apache.org/licenses/LICENSE-2.0
-
- Unless required by applicable law or agreed to in writing, software
- distributed under the License is distributed on an "AS IS" BASIS,
- WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- See the License for the specific language governing permissions and
- limitations under the License.
-*/
+ Copyright 2019 Padduck, LLC
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  	http://www.apache.org/licenses/LICENSE-2.0
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+ */
 
 package common
 
 import (
 	"errors"
-	"github.com/pufferpanel/apufferi/logging"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -32,30 +29,24 @@ func JoinPath(paths ...string) string {
 }
 
 func EnsureAccess(source string, prefix string) bool {
-	logging.Devel("Checking " + source)
 	replacement, err := findFullPath(source)
 	if err != nil && !os.IsNotExist(err) {
-		logging.Devel("Error: " + err.Error())
 		return false
 	} else if os.IsNotExist(err) {
 		replacement, err = filepath.Abs(source)
 		if err != nil {
-			logging.Devel("Error on ABS conversion for path: " + source)
-			logging.Devel(err.Error())
 			return false
 		}
 	}
-	logging.Devel("Result: " + replacement)
 
 	return strings.HasPrefix(replacement, prefix)
 }
 
-func RemoveInvalidSymlinks(files []os.FileInfo, sourceFolder, prefix string) []os.FileInfo{
+func RemoveInvalidSymlinks(files []os.FileInfo, sourceFolder, prefix string) []os.FileInfo {
 	i := 0
 	for _, v := range files {
-		if v.Mode() & os.ModeSymlink != 0{
-			if !EnsureAccess(sourceFolder + string(os.PathSeparator) + v.Name(), prefix) {
-				logging.Develf("Removing file as symlink with invalid path: %s", sourceFolder + string(os.PathSeparator) + v.Name())
+		if v.Mode()&os.ModeSymlink != 0 {
+			if !EnsureAccess(sourceFolder+string(os.PathSeparator)+v.Name(), prefix) {
 				continue
 			}
 		}
@@ -64,6 +55,26 @@ func RemoveInvalidSymlinks(files []os.FileInfo, sourceFolder, prefix string) []o
 	}
 
 	return files[:i]
+}
+
+func CopyFile(src, dest string) error {
+	source, err := os.Open(src)
+	if err != nil {
+		return err
+	}
+	defer Close(source)
+
+	err = os.MkdirAll(filepath.Dir(dest), 0755)
+	if err != nil {
+		return err
+	}
+	destination, err := os.Create(dest)
+	if err != nil {
+		return err
+	}
+	defer Close(destination)
+	_, err = io.Copy(destination, source)
+	return err
 }
 
 func findFullPath(source string) (string, error) {

@@ -13,11 +13,10 @@
 
 package common
 
-func ContainsValue(arr []string, value string) bool {
-	for _, v := range arr {
-		if v == value {
-			return true
-		}
+import "io"
+
+func Close(closer io.Closer) {
+	if closer != nil {
+		closer.Close()
 	}
-	return false
 }
