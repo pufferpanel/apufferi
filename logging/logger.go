@@ -9,7 +9,7 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- */
+*/
 
 package logging
 
@@ -22,9 +22,8 @@ import (
 )
 
 const (
-	formatNoData   = "[%s] [%s] %s\n"
-	formatWithData = "[%s] [%s] %s\n%v\n"
-	timeFormat     = "15:04:05"
+	format     = "[%s] [%s] %s\n"
+	timeFormat = "15:04:05"
 )
 
 type logWriter struct {
@@ -104,32 +103,21 @@ func Log(lvl *Level, msg string, data ...interface{}) {
 	logMsg := &message{
 		level:   lvl,
 		message: msg,
-		data:    data,
+		data:    data[0].([]interface{}),
 	}
 	input <- logMsg
 }
 
 func runLogMessage(message *message) {
-	dataLength := 0
-	if message.data != nil {
-		dataLength = len(message.data[0].([]interface{}))
-	}
-	if message.data == nil || dataLength == 0 {
-		var output = fmt.Sprintf(formatNoData, getTimestamp(), message.level.GetName(), message.message)
-		logString(message.level, output)
+	var output string
+	if message.data == nil || len(message.data) == 0 {
+		output = message.message
 	} else {
-		cast := make([]interface{}, 4)
-		cast[0] = getTimestamp()
-		cast[1] = message.level.GetName()
-		cast[2] = message.message
-		if dataLength == 1 {
-			cast[3] = message.data[0].([]interface{})[0]
-		} else {
-			cast[3] = message.data[0].([]interface{})
-		}
-		var output = fmt.Sprintf(formatWithData, cast...)
-		logString(message.level, output)
+		output = fmt.Sprintf(message.message, message.data...)
 	}
+
+	output = fmt.Sprintf(format, getTimestamp(), message.level.GetName(), output)
+	logString(message.level, output)
 }
 
 func logString(lvl *Level, output string) {
