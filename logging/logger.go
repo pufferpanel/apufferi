@@ -40,7 +40,7 @@ type message struct {
 
 var (
 	writers = make([]*logWriter, 0)
-	input   = make(chan *message, 10)
+	input   = make(chan *message, 100)
 )
 
 func init() {
@@ -105,7 +105,13 @@ func Log(lvl *Level, msg string, data ...interface{}) {
 		message: msg,
 		data:    data[0].([]interface{}),
 	}
-	input <- logMsg
+
+	//sends the log message to the channel
+	//this is not blocking, but won't stop execution if somehow the buffer is full
+	select {
+	case input <- logMsg:
+	default:
+	}
 }
 
 func runLogMessage(message *message) {
