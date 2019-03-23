@@ -18,6 +18,7 @@ import (
 	"github.com/pufferpanel/apufferi/common"
 	"io"
 	"os"
+	"sync"
 	"time"
 )
 
@@ -41,6 +42,7 @@ type message struct {
 var (
 	writers = make([]*logWriter, 0)
 	input   = make(chan *message, 100)
+	wg      sync.WaitGroup
 )
 
 func init() {
@@ -68,6 +70,7 @@ func WithWriterIgnore(writer io.Writer, lvl *Level, ignored *Level) {
 }
 
 func Close() {
+	wg.Wait()
 	for _, v := range writers {
 		if closer, ok := v.writer.(io.WriteCloser); ok {
 			common.Close(closer)
@@ -110,6 +113,7 @@ func Log(lvl *Level, msg string, data ...interface{}) {
 	//this is not blocking, but won't stop execution if somehow the buffer is full
 	select {
 	case input <- logMsg:
+		wg.Add(1)
 	default:
 	}
 }
@@ -135,6 +139,7 @@ func logString(lvl *Level, output string) {
 			}(v.writer, output)
 		}
 	}
+	wg.Done()
 }
 
 func getTimestamp() string {
