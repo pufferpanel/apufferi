@@ -18,6 +18,7 @@ import (
 	"github.com/pufferpanel/apufferi/common"
 	"io"
 	"os"
+	"strings"
 	"sync"
 	"time"
 )
@@ -125,6 +126,9 @@ func runLogMessage(message *message) {
 	} else {
 		output = fmt.Sprintf(message.message, message.data...)
 	}
+
+	output = strings.TrimSuffix(output, "\r\n")
+	output = strings.TrimSuffix(output, "\n")
 
 	output = fmt.Sprintf(format, getTimestamp(), message.level.GetName(), output)
 	logString(message.level, output)
