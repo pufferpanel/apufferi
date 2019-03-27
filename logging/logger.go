@@ -106,7 +106,7 @@ func Log(lvl *Level, msg string, data ...interface{}) {
 	logMsg := &message{
 		level:   lvl,
 		message: msg,
-		data:    data[0].([]interface{}),
+		data:    data,
 	}
 
 	//sends the log message to the channel
