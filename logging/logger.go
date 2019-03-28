@@ -80,30 +80,36 @@ func Close() {
 }
 
 func Info(msg string, data ...interface{}) {
-	Log(INFO, msg, data)
+	Log(INFO, msg, data...)
 }
 
 func Warn(msg string, data ...interface{}) {
-	Log(WARN, msg, data)
+	Log(WARN, msg, data...)
 }
 
 func Debug(msg string, data ...interface{}) {
-	Log(DEBUG, msg, data)
+	Log(DEBUG, msg, data...)
 }
 
 func Error(msg string, data ...interface{}) {
-	Log(ERROR, msg, data)
+	Log(ERROR, msg, data...)
 }
 
 func Critical(msg string, data ...interface{}) {
-	Log(CRITICAL, msg, data)
+	Log(CRITICAL, msg, data...)
 }
 
 func Devel(msg string, data ...interface{}) {
-	Log(DEVEL, msg, data)
+	Log(DEVEL, msg, data...)
 }
 
 func Log(lvl *Level, msg string, data ...interface{}) {
+	d := data
+
+	if d != nil && len(d) == 0 {
+		d = nil
+	}
+
 	logMsg := &message{
 		level:   lvl,
 		message: msg,
@@ -117,6 +123,10 @@ func Log(lvl *Level, msg string, data ...interface{}) {
 		wg.Add(1)
 	default:
 	}
+}
+
+func Build(lvl *Level) Builder {
+	return createBuilder(lvl)
 }
 
 func runLogMessage(message *message) {
