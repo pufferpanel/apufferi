@@ -20,6 +20,8 @@ func ToStringArray(element interface{}) []string {
 	switch element.(type) {
 	case string:
 		return []string{element.(string)}
+	case []string:
+		return element.([]string)
 	case []interface{}:
 		var arr = make([]string, 0)
 		for _, element := range element.([]interface{}) {
