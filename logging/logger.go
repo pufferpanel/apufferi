@@ -70,6 +70,14 @@ func WithWriterIgnore(writer io.Writer, lvl *Level, ignored *Level) {
 	writers = append(writers, &logWriter{writer: writer, level: lvl, ignore: ignored})
 }
 
+func SetLevel(writer io.Writer, lvl *Level) {
+	for _, v := range writers {
+		if v.writer == writer {
+			v.level = lvl
+		}
+	}
+}
+
 func Close() {
 	wg.Wait()
 	for _, v := range writers {
@@ -149,7 +157,7 @@ func logString(lvl *Level, output string) {
 		//log to this writer messages which are either the same level or higher, but not over the max
 		if lvl.GetScale() >= v.level.GetScale() && (v.ignore == nil || lvl.GetScale() < v.ignore.GetScale()) {
 			go func(w io.Writer, o string) {
-				fmt.Fprint(w, o)
+				_, _ = fmt.Fprint(w, o)
 			}(v.writer, output)
 		}
 	}
