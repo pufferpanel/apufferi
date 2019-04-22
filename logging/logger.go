@@ -111,6 +111,10 @@ func Devel(msg string, data ...interface{}) {
 	Log(DEVEL, msg, data...)
 }
 
+func Exception(msg string, err error) {
+	Build(ERROR).WithMessage(msg).WithError(err).Log()
+}
+
 func Log(lvl *Level, msg string, data ...interface{}) {
 	d := data
 
