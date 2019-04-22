@@ -17,6 +17,7 @@ import (
 	"fmt"
 	"github.com/pufferpanel/apufferi/common"
 	"io"
+	"log"
 	"os"
 	"strings"
 	"sync"
@@ -51,6 +52,8 @@ func init() {
 	//errors go to stderr, regular goes to stdout
 	WithWriterIgnore(os.Stdout, INFO, ERROR)
 	WithWriter(os.Stderr, ERROR)
+
+	log.SetOutput(AsWriter(INFO))
 
 	go func() {
 		for {
