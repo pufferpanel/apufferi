@@ -9,22 +9,26 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- */
+*/
 
 package logging
 
 import "io"
 
+type writeLogger struct {
+	io.Writer
+
+	level *Level
+}
+
 // This is simply a wrapper around the logger system so that interfaces which
 // expect a Writer as a target will be able to use the logging structure we have
 // located here.
-var Writer io.Writer = &writeLogger{}
-
-type writeLogger struct {
-	io.Writer
+func AsWriter(level *Level) io.Writer {
+	return &writeLogger{level: level}
 }
 
 func (wl *writeLogger) Write(p []byte) (int, error) {
-	Log(INFO, string(p))
+	Log(wl.level, string(p))
 	return len(p), nil
 }
