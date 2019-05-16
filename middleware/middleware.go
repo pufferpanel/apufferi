@@ -14,8 +14,8 @@
 package middleware
 
 import (
-	"github.com/pufferpanel/apufferi"
 	"github.com/pufferpanel/apufferi/logging"
+	"github.com/pufferpanel/apufferi/response"
 	"runtime/debug"
 )
 
@@ -31,7 +31,7 @@ type Middleware interface {
 func ExecuteAndRecover(c Middleware) {
 	defer func() {
 		if err := recover(); err != nil {
-			http.Respond(c).Fail().Status(500).Code(http.UNKNOWN).Message("unexpected error").Data(err).Send()
+			response.Respond(c).Fail().Status(500).Message("unexpected error").Data(err).Send()
 			logging.Error("Error handling route\n%+v\n%s", err, debug.Stack())
 			c.Abort()
 		}

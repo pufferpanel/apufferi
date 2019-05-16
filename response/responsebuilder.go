@@ -32,9 +32,6 @@ type Builder interface {
 	Data(data interface{}) Builder
 	WithData(data interface{}) Builder
 
-	Code(code apufferi.Code) Builder
-	WithCode(code apufferi.Code) Builder
-
 	Error(err error) Builder
 	WithError(err error) Builder
 
@@ -51,7 +48,6 @@ func Respond(c Context) Builder {
 		response: response{
 			Success: true,
 			Status:  200,
-			Code:    apufferi.SUCCESS,
 		},
 		context: c,
 	}
@@ -84,15 +80,6 @@ func (rb *responseBuilder) Data(data interface{}) Builder {
 
 func (rb *responseBuilder) WithData(data interface{}) Builder {
 	rb.response.Data = data
-	return rb
-}
-
-func (rb *responseBuilder) Code(code apufferi.Code) Builder {
-	return rb.WithCode(code)
-}
-
-func (rb *responseBuilder) WithCode(code apufferi.Code) Builder {
-	rb.response.Code = code
 	return rb
 }
 
@@ -149,7 +136,6 @@ type response struct {
 	Message  string        `json:"msg,omitempty"`
 	Data     interface{}   `json:"data,omitempty"`
 	Status   int           `json:"-"`
-	Code     apufferi.Code `json:"code,omitempty"`
 	Metadata *metadata     `json:"metadata,omitempty"`
 	Error    *errorData    `json:"error,omitempty"`
 }
