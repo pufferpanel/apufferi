@@ -15,7 +15,7 @@ package logging
 
 import (
 	"fmt"
-	"github.com/pufferpanel/apufferi/common"
+	"github.com/pufferpanel/apufferi"
 	"io"
 	"log"
 	"os"
@@ -85,7 +85,7 @@ func Close() {
 	wg.Wait()
 	for _, v := range writers {
 		if closer, ok := v.writer.(io.WriteCloser); ok {
-			common.Close(closer)
+			apufferi.Close(closer)
 		}
 	}
 }

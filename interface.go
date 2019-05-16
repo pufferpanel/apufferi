@@ -9,15 +9,23 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- */
+*/
 
-package common
+package apufferi
 
-func ContainsValue(arr []string, value string) bool {
-	for _, v := range arr {
-		if v == value {
-			return true
+func ToStringArray(element interface{}) []string {
+	switch element.(type) {
+	case string:
+		return []string{element.(string)}
+	case []string:
+		return element.([]string)
+	case []interface{}:
+		var arr = make([]string, 0)
+		for _, element := range element.([]interface{}) {
+			arr = append(arr, element.(string))
 		}
+		return arr
+	default:
+		return []string{}
 	}
-	return false
 }
