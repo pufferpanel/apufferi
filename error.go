@@ -14,6 +14,8 @@
 package apufferi
 
 type Error interface {
+	error
+
 	GetMessage() string
 
 	GetHumanMessage() string
@@ -39,10 +41,33 @@ func (ge genericError) GetCode() int {
 	return ge.code
 }
 
+func (ge genericError) Error() string {
+	if ge.human != "" {
+		return ge.human
+	} else {
+		return ge.message
+	}
+}
+
 func CreateError(msg, humanMsg string, code int) Error {
 	return genericError{
 		message: msg,
 		human: humanMsg,
 		code: code,
+	}
+}
+
+func FromError(err error) Error {
+	if err == nil {
+		return nil
+	}
+
+	if e, ok := err.(Error); e != nil && ok {
+		return e
+	}
+	return genericError{
+		message: err.Error(),
+		human: err.Error(),
+		code: 0,
 	}
 }
