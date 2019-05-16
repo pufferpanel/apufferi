@@ -9,25 +9,21 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- */
+*/
 
-package handler
+package apufferi
 
-import (
-	"runtime/debug"
+type Code uint
 
-	"github.com/pufferpanel/apufferi/http"
-	"github.com/pufferpanel/apufferi/logging"
+const (
+	SUCCESS          Code = 0
+	NOTAUTHORIZED         = 400
+	NOAUTHENTICATION      = 401
+	NOSERVER              = 402
+	MALFORMEDJSON         = 403
+	NOFILE                = 404
+	NOSERVERID            = 405
+	INVALIDTIME           = 406
+	INVALIDREQUEST        = 407
+	UNKNOWN               = 999
 )
-
-func ExecuteAndRecover(c Middleware) {
-	defer func() {
-		if err := recover(); err != nil {
-			http.Respond(c).Fail().Status(500).Code(http.UNKNOWN).Message("unexpected error").Data(err).Send()
-			logging.Error("Error handling route\n%+v\n%s", err, debug.Stack())
-			c.Abort()
-		}
-	}()
-
-	c.Next()
-}

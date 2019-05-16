@@ -9,9 +9,15 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- */
+*/
 
-package handler
+package middleware
+
+import (
+	"github.com/pufferpanel/apufferi"
+	"github.com/pufferpanel/apufferi/logging"
+	"runtime/debug"
+)
 
 //wrapper around gin so that we don't have to dep on it within this package explicitly
 type Middleware interface {
@@ -20,4 +26,16 @@ type Middleware interface {
 	Next()
 
 	JSON(code int, data interface{})
+}
+
+func ExecuteAndRecover(c Middleware) {
+	defer func() {
+		if err := recover(); err != nil {
+			http.Respond(c).Fail().Status(500).Code(http.UNKNOWN).Message("unexpected error").Data(err).Send()
+			logging.Error("Error handling route\n%+v\n%s", err, debug.Stack())
+			c.Abort()
+		}
+	}()
+
+	c.Next()
 }

@@ -9,9 +9,11 @@
   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
   See the License for the specific language governing permissions and
   limitations under the License.
- */
+*/
 
-package http
+package response
+
+import "github.com/pufferpanel/apufferi"
 
 type responseBuilder struct {
 	response response
@@ -30,8 +32,11 @@ type Builder interface {
 	Data(data interface{}) Builder
 	WithData(data interface{}) Builder
 
-	Code(code Code) Builder
-	WithCode(code Code) Builder
+	Code(code apufferi.Code) Builder
+	WithCode(code apufferi.Code) Builder
+
+	Error(err error) Builder
+	WithError(err error) Builder
 
 	Fail() Builder
 	Success() Builder
@@ -46,7 +51,7 @@ func Respond(c Context) Builder {
 		response: response{
 			Success: true,
 			Status:  200,
-			Code:    SUCCESS,
+			Code:    apufferi.SUCCESS,
 		},
 		context: c,
 	}
@@ -82,11 +87,11 @@ func (rb *responseBuilder) WithData(data interface{}) Builder {
 	return rb
 }
 
-func (rb *responseBuilder) Code(code Code) Builder {
+func (rb *responseBuilder) Code(code apufferi.Code) Builder {
 	return rb.WithCode(code)
 }
 
-func (rb *responseBuilder) WithCode(code Code) Builder {
+func (rb *responseBuilder) WithCode(code apufferi.Code) Builder {
 	rb.response.Code = code
 	return rb
 }
@@ -121,4 +126,51 @@ func (rb *responseBuilder) WithPageInfo(page, pageSize, maxSize, total uint) Bui
 			Total:   total,
 		}}
 	return rb
+}
+
+func (rb *responseBuilder) Error(err error) Builder {
+	return rb.WithError(err)
+}
+
+func (rb *responseBuilder) WithError(err error) Builder {
+	convertedErr := apufferi.FromError(err)
+
+	rb.response.Error = &errorData{
+		Msg:           convertedErr.GetMessage(),
+		HumanReadable: convertedErr.GetHumanMessage(),
+		Code:          convertedErr.GetCode(),
+	}
+
+	return rb.Fail()
+}
+
+type response struct {
+	Success  bool          `json:"success"`
+	Message  string        `json:"msg,omitempty"`
+	Data     interface{}   `json:"data,omitempty"`
+	Status   int           `json:"-"`
+	Code     apufferi.Code `json:"code,omitempty"`
+	Metadata *metadata     `json:"metadata,omitempty"`
+	Error    *errorData    `json:"error,omitempty"`
+}
+
+type errorData struct {
+	Msg           string `json:"msg,omitempty"`
+	HumanReadable string `json:"humanReadable,omitempty"`
+	Code          int    `json:"code,omitempty"`
+}
+
+type metadata struct {
+	Paging *paging `json:"paging"`
+}
+
+type paging struct {
+	Page    uint `json:"page,omitempty"`
+	Size    uint `json:"pageSize,omitempty"`
+	MaxSize uint `json:"maxSize,omitempty"`
+	Total   uint `json:"total,omitempty"`
+}
+
+type Context interface {
+	JSON(code int, body interface{})
 }
