@@ -39,7 +39,7 @@ func (ge genericError) GetCode() int {
 	return ge.code
 }
 
-func Create(msg, humanMsg string, code int) Error {
+func CreateError(msg, humanMsg string, code int) Error {
 	return genericError{
 		message: msg,
 		human: humanMsg,
