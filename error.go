@@ -26,15 +26,16 @@ type Error interface {
 
 	Is(Error) bool
 
-	SetData(machine []interface{}, human []interface{}) Error
+	SetData(machine []string, human []string) Error
+	Set(machine string, human string) Error
 }
 
 type genericError struct {
 	message   string
 	human     string
 	code      int
-	msgData   []interface{}
-	humanData []interface{}
+	msgData   []string
+	humanData []string
 }
 
 func (ge genericError) GetMessage() string {
@@ -61,7 +62,7 @@ func (ge genericError) Is(err Error) bool {
 	return ge.GetCode() == err.GetCode()
 }
 
-func (ge genericError) SetData(machine []interface{}, human []interface{}) Error {
+func (ge genericError) SetData(machine []string, human []string) Error {
 	cp := ge
 	cp.msgData = machine
 	if human == nil {
@@ -70,6 +71,13 @@ func (ge genericError) SetData(machine []interface{}, human []interface{}) Error
 		cp.humanData = human
 	}
 	return cp
+}
+
+func (ge genericError) Set(machine string, human string) Error {
+	if human == "" {
+		human = machine
+	}
+	return ge.SetData([]string{machine}, []string{human})
 }
 
 func CreateError(msg, humanMsg string, code int) Error {
