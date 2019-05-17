@@ -25,6 +25,8 @@ type Error interface {
 	GetCode() int
 
 	Is(Error) bool
+
+	SetData(machine []interface{}, human []interface{}) Error
 }
 
 type genericError struct {
