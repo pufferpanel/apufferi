@@ -20,30 +20,22 @@ type Error interface {
 
 	GetMessage() string
 
-	GetHumanMessage() string
-
 	GetCode() int
 
 	Is(Error) bool
 
-	SetData(machine []string, human []string) Error
-	Set(machine string, human string) Error
+	Set(data ...interface{}) Error
 }
 
 type genericError struct {
 	message   string
 	human     string
 	code      int
-	msgData   []string
-	humanData []string
+	data      []interface{}
 }
 
 func (ge genericError) GetMessage() string {
-	return fmt.Sprintf(ge.message, ge.msgData)
-}
-
-func (ge genericError) GetHumanMessage() string {
-	return fmt.Sprintf(ge.human, ge.humanData)
+	return fmt.Sprintf(ge.message, ge.data...)
 }
 
 func (ge genericError) GetCode() int {
@@ -51,33 +43,17 @@ func (ge genericError) GetCode() int {
 }
 
 func (ge genericError) Error() string {
-	if ge.human != "" {
-		return fmt.Sprintf(ge.human, ge.humanData)
-	} else {
-		return fmt.Sprintf(ge.message, ge.msgData)
-	}
+	return fmt.Sprintf(ge.message, ge.data...)
 }
 
 func (ge genericError) Is(err Error) bool {
 	return ge.GetCode() == err.GetCode()
 }
 
-func (ge genericError) SetData(machine []string, human []string) Error {
+func (ge genericError) Set(machine ...interface{}) Error {
 	cp := ge
-	cp.msgData = machine
-	if human == nil {
-		cp.humanData = cp.msgData
-	} else {
-		cp.humanData = human
-	}
+	cp.data = machine
 	return cp
-}
-
-func (ge genericError) Set(machine string, human string) Error {
-	if human == "" {
-		human = machine
-	}
-	return ge.SetData([]string{machine}, []string{human})
 }
 
 func CreateError(msg, humanMsg string, code int) Error {
