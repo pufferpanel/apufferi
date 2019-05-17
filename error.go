@@ -20,7 +20,7 @@ type Error interface {
 
 	GetMessage() string
 
-	GetCode() int
+	GetCode() string
 
 	Is(Error) bool
 
@@ -28,21 +28,22 @@ type Error interface {
 }
 
 type genericError struct {
-	message   string
-	code      int
-	data      []interface{}
+	Message string                 `json:"msg,omitempty"`
+	Code    string                 `json:"code,omitempty"`
+	Args    []interface{}          `json:"-"`
+	Meta    map[string]interface{} `json:"metadata,omitempty"`
 }
 
 func (ge genericError) GetMessage() string {
-	return fmt.Sprintf(ge.message, ge.data...)
+	return fmt.Sprintf(ge.Message, ge.Args...)
 }
 
-func (ge genericError) GetCode() int {
-	return ge.code
+func (ge genericError) GetCode() string {
+	return ge.Code
 }
 
 func (ge genericError) Error() string {
-	return fmt.Sprintf(ge.message, ge.data...)
+	return ge.GetMessage()
 }
 
 func (ge genericError) Is(err Error) bool {
@@ -51,14 +52,20 @@ func (ge genericError) Is(err Error) bool {
 
 func (ge genericError) Set(machine ...interface{}) Error {
 	cp := ge
-	cp.data = machine
+	cp.Args = machine
 	return cp
 }
 
-func CreateError(msg string, code int) Error {
+func (ge genericError) Metadata(metadata map[string]interface{}) Error {
+	cp := ge
+	cp.Meta = metadata
+	return cp
+}
+
+func CreateError(msg, code string) Error {
 	return genericError{
-		message: msg,
-		code:    code,
+		Message: msg,
+		Code:    code,
 	}
 }
 
@@ -71,7 +78,7 @@ func FromError(err error) Error {
 		return e
 	}
 	return genericError{
-		message: err.Error(),
-		code:    0,
+		Message: err.Error(),
+		Code:    "ErrGeneric",
 	}
 }
