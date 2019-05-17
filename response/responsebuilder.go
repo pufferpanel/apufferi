@@ -120,30 +120,18 @@ func (rb *responseBuilder) Error(err error) Builder {
 }
 
 func (rb *responseBuilder) WithError(err error) Builder {
-	convertedErr := apufferi.FromError(err)
-
-	rb.response.Error = &errorData{
-		Msg:           convertedErr.GetMessage(),
-		HumanReadable: convertedErr.GetHumanMessage(),
-		Code:          convertedErr.GetCode(),
-	}
+	rb.response.Error = apufferi.FromError(err)
 
 	return rb.Fail()
 }
 
 type response struct {
-	Success  bool          `json:"success"`
-	Message  string        `json:"msg,omitempty"`
-	Data     interface{}   `json:"data,omitempty"`
-	Status   int           `json:"-"`
-	Metadata *metadata     `json:"metadata,omitempty"`
-	Error    *errorData    `json:"error,omitempty"`
-}
-
-type errorData struct {
-	Msg           string `json:"msg,omitempty"`
-	HumanReadable string `json:"humanReadable,omitempty"`
-	Code          int    `json:"code,omitempty"`
+	Success  bool           `json:"success"`
+	Message  string         `json:"msg,omitempty"`
+	Data     interface{}    `json:"data,omitempty"`
+	Status   int            `json:"-"`
+	Metadata *metadata      `json:"metadata,omitempty"`
+	Error    apufferi.Error `json:"error,omitempty"`
 }
 
 type metadata struct {
