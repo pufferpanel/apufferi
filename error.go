@@ -29,7 +29,6 @@ type Error interface {
 
 type genericError struct {
 	message   string
-	human     string
 	code      int
 	data      []interface{}
 }
@@ -56,14 +55,9 @@ func (ge genericError) Set(machine ...interface{}) Error {
 	return cp
 }
 
-func CreateError(msg, humanMsg string, code int) Error {
-	if humanMsg == "" {
-		humanMsg = msg
-	}
-
+func CreateError(msg string, code int) Error {
 	return genericError{
 		message: msg,
-		human:   humanMsg,
 		code:    code,
 	}
 }
@@ -78,7 +72,6 @@ func FromError(err error) Error {
 	}
 	return genericError{
 		message: err.Error(),
-		human:   err.Error(),
 		code:    0,
 	}
 }
