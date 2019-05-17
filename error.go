@@ -13,6 +13,8 @@
 
 package apufferi
 
+import "fmt"
+
 type Error interface {
 	error
 
@@ -21,20 +23,24 @@ type Error interface {
 	GetHumanMessage() string
 
 	GetCode() int
+
+	Is(Error) bool
 }
 
 type genericError struct {
-	message string
-	human string
-	code int
+	message   string
+	human     string
+	code      int
+	msgData   []interface{}
+	humanData []interface{}
 }
 
 func (ge genericError) GetMessage() string {
-	return ge.message
+	return fmt.Sprintf(ge.message, ge.msgData)
 }
 
 func (ge genericError) GetHumanMessage() string {
-	return ge.human
+	return fmt.Sprintf(ge.human, ge.humanData)
 }
 
 func (ge genericError) GetCode() int {
@@ -43,17 +49,36 @@ func (ge genericError) GetCode() int {
 
 func (ge genericError) Error() string {
 	if ge.human != "" {
-		return ge.human
+		return fmt.Sprintf(ge.human, ge.humanData)
 	} else {
-		return ge.message
+		return fmt.Sprintf(ge.message, ge.msgData)
 	}
 }
 
+func (ge genericError) Is(err Error) bool {
+	return ge.GetCode() == err.GetCode()
+}
+
+func (ge genericError) SetData(machine []interface{}, human []interface{}) Error {
+	cp := ge
+	cp.msgData = machine
+	if human == nil {
+		cp.humanData = cp.msgData
+	} else {
+		cp.humanData = human
+	}
+	return cp
+}
+
 func CreateError(msg, humanMsg string, code int) Error {
+	if humanMsg == "" {
+		humanMsg = msg
+	}
+
 	return genericError{
 		message: msg,
-		human: humanMsg,
-		code: code,
+		human:   humanMsg,
+		code:    code,
 	}
 }
 
@@ -67,7 +92,7 @@ func FromError(err error) Error {
 	}
 	return genericError{
 		message: err.Error(),
-		human: err.Error(),
-		code: 0,
+		human:   err.Error(),
+		code:    0,
 	}
 }
