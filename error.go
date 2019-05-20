@@ -25,6 +25,8 @@ type Error interface {
 	Is(Error) bool
 
 	Set(data ...interface{}) Error
+
+	Metadata(metadata map[string]interface{}) Error
 }
 
 type genericError struct {
