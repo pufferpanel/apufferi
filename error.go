@@ -13,8 +13,6 @@
 
 package apufferi
 
-import "fmt"
-
 type Error interface {
 	error
 
@@ -24,20 +22,17 @@ type Error interface {
 
 	Is(Error) bool
 
-	Set(data ...interface{}) Error
-
 	Metadata(metadata map[string]interface{}) Error
 }
 
 type genericError struct {
 	Message string                 `json:"msg,omitempty"`
 	Code    string                 `json:"code,omitempty"`
-	Args    []interface{}          `json:"-"`
 	Meta    map[string]interface{} `json:"metadata,omitempty"`
 }
 
 func (ge genericError) GetMessage() string {
-	return fmt.Sprintf(ge.Message, ge.Args...)
+	return ReplaceTokens(ge.Message, ge.Meta)
 }
 
 func (ge genericError) GetCode() string {
@@ -50,12 +45,6 @@ func (ge genericError) Error() string {
 
 func (ge genericError) Is(err Error) bool {
 	return ge.GetCode() == err.GetCode()
-}
-
-func (ge genericError) Set(machine ...interface{}) Error {
-	cp := ge
-	cp.Args = machine
-	return cp
 }
 
 func (ge genericError) Metadata(metadata map[string]interface{}) Error {
