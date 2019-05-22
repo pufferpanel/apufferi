@@ -132,10 +132,11 @@ func Log(lvl *Level, msg string, data ...interface{}) {
 
 	//sends the log message to the channel
 	//this is not blocking, but won't stop execution if somehow the buffer is full
+	wg.Add(1)
 	select {
 	case input <- logMsg:
-		wg.Add(1)
 	default:
+		wg.Done()
 	}
 }
 
