@@ -14,14 +14,14 @@
 package apufferi
 
 type Server struct {
-	Variables   map[string]Variable `json:"data,omitempty"`
-	Display     string              `json:"display,omitempty"`
-	Environment TypeWithMetadata    `json:"environment,omitempty"`
-	Install     []TypeWithMetadata  `json:"install,omitempty"`
-	Uninstall   []TypeWithMetadata  `json:"uninstall,omitempty"`
-	Type        string              `json:"type,omitempty"`
-	Identifier  string              `json:"id,omitempty"`
-	Execution   Execution           `json:"run,omitempty"`
+	Variables      map[string]Variable `json:"data,omitempty"`
+	Display        string              `json:"display,omitempty"`
+	Environment    TypeWithMetadata    `json:"environment,omitempty"`
+	Installation   []TypeWithMetadata  `json:"install,omitempty"`
+	Uninstallation []TypeWithMetadata  `json:"uninstall,omitempty"`
+	Type           string              `json:"type,omitempty"`
+	Identifier     string              `json:"id,omitempty"`
+	Execution      Execution           `json:"run,omitempty"`
 }
 
 type Variable struct {
@@ -37,14 +37,14 @@ type Variable struct {
 
 type Execution struct {
 	Arguments               []string           `json:"arguments,omitempty"`
-	Program                 string             `json:"program,omitempty"`
-	Stop                    string             `json:"stop,omitempty"`
+	ProgramName             string             `json:"program,omitempty"`
+	StopCommand             string             `json:"stop,omitempty"`
 	Enabled                 bool               `json:"enabled,omitempty"`
 	AutoStart               bool               `json:"autostart,omitempty"`
 	AutoRestartFromCrash    bool               `json:"autorecover,omitempty"`
 	AutoRestartFromGraceful bool               `json:"autorestart,omitempty"`
-	Pre                     []TypeWithMetadata `json:"pre,omitempty"`
-	Post                    []TypeWithMetadata `json:"post,omitempty"`
+	PreExecution            []TypeWithMetadata `json:"pre,omitempty"`
+	PostExecution           []TypeWithMetadata `json:"post,omitempty"`
 	StopCode                int                `json:"stopCode,omitempty"`
 	EnvironmentVariables    map[string]string  `json:"environmentVars,omitempty"`
 }
