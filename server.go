@@ -14,15 +14,14 @@
 package apufferi
 
 type Server struct {
-	Variable        map[string]Variable `json:"data,omitempty"`
-	Display         string              `json:"display,omitempty"`
-	EnvironmentData TypeWithMetadata    `json:"environment,omitempty"`
-	InstallData     []TypeWithMetadata  `json:"install,omitempty"`
-	UninstallData   []TypeWithMetadata  `json:"uninstall,omitempty"`
-	Type            string              `json:"type,omitempty"`
-	Identifier      string              `json:"id,omitempty"`
-	RunData         Execution           `json:"run,omitempty"`
-	Template        string              `json:"template,omitempty"`
+	Variables   map[string]Variable `json:"data,omitempty"`
+	Display     string              `json:"display,omitempty"`
+	Environment TypeWithMetadata    `json:"environment,omitempty"`
+	Install     []TypeWithMetadata  `json:"install,omitempty"`
+	Uninstall   []TypeWithMetadata  `json:"uninstall,omitempty"`
+	Type        string              `json:"type,omitempty"`
+	Identifier  string              `json:"id,omitempty"`
+	Execution   Execution           `json:"run,omitempty"`
 }
 
 type Variable struct {
