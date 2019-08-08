@@ -19,6 +19,7 @@ type responseBuilder struct {
 	response *response
 	context  Context
 	discard  bool
+	sent     bool
 }
 
 type Builder interface {
@@ -47,19 +48,19 @@ type Builder interface {
 }
 
 func Respond(c Context) Builder {
-	return &responseBuilder{
-		response: &response{
-			Success: true,
-			Status:  200,
-		},
-		context: c,
-	}
+	return From(c)
 }
 
 func From(c Context) Builder {
 	val := c.Value("response")
 	if val == nil {
-		return Respond(c)
+		return &responseBuilder{
+			response: &response{
+				Success: true,
+				Status:  200,
+			},
+			context: c,
+		}
 	} else {
 		return val.(Builder)
 	}
@@ -109,9 +110,10 @@ func (rb *responseBuilder) WithSuccess(success bool) Builder {
 }
 
 func (rb *responseBuilder) Send() {
-	if rb.discard {
+	if rb.discard || rb.sent {
 		return
 	}
+	rb.sent = true
 	rb.context.JSON(rb.response.Status, rb.response)
 }
 
