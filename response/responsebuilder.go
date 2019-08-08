@@ -53,6 +53,15 @@ func Respond(c Context) Builder {
 	}
 }
 
+func From(c Context) Builder {
+	val := c.Value("response")
+	if val == nil {
+		return Respond(c)
+	} else {
+		return val.(Builder)
+	}
+}
+
 func (rb *responseBuilder) Status(status int) Builder {
 	return rb.WithStatus(status)
 }
@@ -147,4 +156,5 @@ type paging struct {
 
 type Context interface {
 	JSON(code int, body interface{})
+	Value(key interface{}) interface{}
 }
