@@ -14,9 +14,11 @@
 package middleware
 
 import (
+	"database/sql"
 	"github.com/pufferpanel/apufferi/logging"
 	"github.com/pufferpanel/apufferi/response"
 	"runtime/debug"
+	"time"
 )
 
 //wrapper around gin so that we don't have to dep on it within this package explicitly
@@ -26,16 +28,62 @@ type Middleware interface {
 	Next()
 
 	JSON(code int, data interface{})
+
+	//Context interface
+	Deadline() (deadline time.Time, ok bool)
+	Done() <-chan struct{}
+	Err() error
+	Value(key interface{}) interface{}
+
+	//used to set values for a context
+	Set(key string, value interface{})
 }
 
-func ExecuteAndRecover(c Middleware) {
+func ResponseAndRecover(c Middleware) {
+	defer func() {
+		result := c.Value("response").(response.Builder)
+
+		if err := recover(); err != nil {
+			result.Fail().Status(500).Message("unexpected error").Data(err)
+			logging.Error("Error handling route\n%+v\n%s", err, debug.Stack())
+			c.Abort()
+		}
+
+		result.Send()
+	}()
+	c.Set("response", response.Respond(c))
+
+	c.Next()
+}
+
+func Recover(c Middleware) {
 	defer func() {
 		if err := recover(); err != nil {
-			response.Respond(c).Fail().Status(500).Message("unexpected error").Data(err).Send()
 			logging.Error("Error handling route\n%+v\n%s", err, debug.Stack())
 			c.Abort()
 		}
 	}()
 
+	c.Next()
+}
+
+func Database(c Middleware, db *sql.DB) {
+	trans, err := db.Begin()
+	if err != nil {
+		panic(err)
+	}
+
+	defer func() {
+		if err := recover(); err != nil {
+			_ = trans.Rollback()
+			panic(err)
+		} else {
+			err = trans.Commit()
+			if err != nil {
+				panic(err)
+			}
+		}
+	}()
+	c.Set("database", trans)
 	c.Next()
 }
