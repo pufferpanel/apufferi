@@ -16,8 +16,9 @@ package response
 import "github.com/pufferpanel/apufferi"
 
 type responseBuilder struct {
-	response response
+	response *response
 	context  Context
+	discard  bool
 }
 
 type Builder interface {
@@ -41,11 +42,13 @@ type Builder interface {
 
 	PageInfo(page, pageSize, maxSize, total uint) Builder
 	WithPageInfo(page, pageSize, maxSize, total uint) Builder
+
+	Discard() Builder
 }
 
 func Respond(c Context) Builder {
 	return &responseBuilder{
-		response: response{
+		response: &response{
 			Success: true,
 			Status:  200,
 		},
@@ -106,6 +109,9 @@ func (rb *responseBuilder) WithSuccess(success bool) Builder {
 }
 
 func (rb *responseBuilder) Send() {
+	if rb.discard {
+		return
+	}
 	rb.context.JSON(rb.response.Status, rb.response)
 }
 
@@ -132,6 +138,11 @@ func (rb *responseBuilder) WithError(err error) Builder {
 	rb.response.Error = apufferi.FromError(err)
 
 	return rb.Fail()
+}
+
+func (rb *responseBuilder) Discard() Builder {
+	rb.discard = true
+	return rb
 }
 
 type response struct {
