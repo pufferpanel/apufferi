@@ -16,7 +16,7 @@ package response
 import "github.com/pufferpanel/apufferi"
 
 type responseBuilder struct {
-	response *response
+	response *Response
 	context  Context
 	discard  bool
 	sent     bool
@@ -55,7 +55,7 @@ func From(c Context) Builder {
 	val := c.Value("response")
 	if val == nil {
 		return &responseBuilder{
-			response: &response{
+			response: &Response{
 				Success: true,
 				Status:  200,
 			},
@@ -122,8 +122,8 @@ func (rb *responseBuilder) PageInfo(page, pageSize, maxSize, total uint) Builder
 }
 
 func (rb *responseBuilder) WithPageInfo(page, pageSize, maxSize, total uint) Builder {
-	rb.response.Metadata = &metadata{
-		Paging: &paging{
+	rb.response.Metadata = &Metadata{
+		Paging: &Paging{
 			Page:    page,
 			Size:    pageSize,
 			MaxSize: maxSize,
@@ -147,20 +147,20 @@ func (rb *responseBuilder) Discard() Builder {
 	return rb
 }
 
-type response struct {
+type Response struct {
 	Success  bool           `json:"success"`
 	Message  string         `json:"msg,omitempty"`
 	Data     interface{}    `json:"data,omitempty"`
 	Status   int            `json:"-"`
-	Metadata *metadata      `json:"metadata,omitempty"`
+	Metadata *Metadata      `json:"metadata,omitempty"`
 	Error    apufferi.Error `json:"error,omitempty"`
 }
 
-type metadata struct {
-	Paging *paging `json:"paging"`
+type Metadata struct {
+	Paging *Paging `json:"paging"`
 }
 
-type paging struct {
+type Paging struct {
 	Page    uint `json:"page,omitempty"`
 	Size    uint `json:"pageSize,omitempty"`
 	MaxSize uint `json:"maxSize,omitempty"`
