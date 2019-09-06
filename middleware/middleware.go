@@ -15,31 +15,13 @@ package middleware
 
 import (
 	"database/sql"
+	"github.com/gin-gonic/gin"
 	"github.com/pufferpanel/apufferi/logging"
 	"github.com/pufferpanel/apufferi/response"
 	"runtime/debug"
-	"time"
 )
 
-//wrapper around gin so that we don't have to dep on it within this package explicitly
-type Middleware interface {
-	Abort()
-
-	Next()
-
-	JSON(code int, data interface{})
-
-	//Context interface
-	Deadline() (deadline time.Time, ok bool)
-	Done() <-chan struct{}
-	Err() error
-	Value(key interface{}) interface{}
-
-	//used to set values for a context
-	Set(key string, value interface{})
-}
-
-func ResponseAndRecover(c Middleware) {
+func ResponseAndRecover(c *gin.Context) {
 	defer func() {
 		result := c.Value("response").(response.Builder)
 
@@ -56,7 +38,7 @@ func ResponseAndRecover(c Middleware) {
 	c.Next()
 }
 
-func Recover(c Middleware) {
+func Recover(c *gin.Context) {
 	defer func() {
 		if err := recover(); err != nil {
 			logging.Error("Error handling route\n%+v\n%s", err, debug.Stack())
@@ -67,7 +49,7 @@ func Recover(c Middleware) {
 	c.Next()
 }
 
-func Database(c Middleware, db *sql.DB) {
+func Database(c *gin.Context, db *sql.DB) {
 	trans, err := db.Begin()
 	if err != nil {
 		panic(err)
