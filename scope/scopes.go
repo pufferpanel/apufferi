@@ -17,53 +17,67 @@ package scope
 const Login = "login"
 
 //oauth2
-const Oauth2Info = "oauth2.info"
+const OAuth2Info = "oauth2.info"
 
 //server
-const ServerAdmin = "servers.admin"
-const ViewServers = "servers.view"
-const EditServers = "servers.edit"
-const EditServerAdmin = "servers.edit.admin"
-const EditServerUsers = "servers.edit.users"
-const CreateServers = "servers.create"
+const ServersAdmin = "servers.admin"
+const ServersView = "servers.view"
+const ServersEdit = "servers.edit"
+const ServersEditAdmin = "servers.edit.admin"
+const ServersEditUsers = "servers.edit.users"
+const ServersCreate = "servers.create"
+const ServersDelete = "servers.delete"
 
-const InstallServers = "servers.install"
-const ServerConsole = "servers.console"
-const ServerSendConsole = "servers.console.send"
-const StopServers = "servers.stop"
-const StartServers = "servers.start"
-const KillServers = "servers.kill"
-const StatServers = "servers.stats"
-const FilesServers = "servers.files"
-const GetFilesServers = "servers.files.get"
-const PutFilesServers = "servers.files.put"
+const ServersInstall = "servers.install"
+const ServersConsole = "servers.console"
+const ServersConsoleSend = "servers.console.send"
+const ServersStop = "servers.stop"
+const ServersStart = "servers.start"
+const ServersStat = "servers.stats"
+const ServersFiles = "servers.files"
+const ServersFilesGet = "servers.files.get"
+const ServersFilesPut = "servers.files.put"
 
 //node
-const ViewNodes = "nodes.view"
-const EditNode = "nodes.edit"
-const DeployNode = "nodes.deploy"
+const NodesView = "nodes.view"
+const NodesEdit = "nodes.edit"
+const NodesDeploy = "nodes.deploy"
 
 //template
-const ViewTemplates = "templates.view"
+const TemplatesView = "templates.view"
 
 //user
-const ViewUsers = "users.view"
-const EditUsers = "users.edit"
+const UsersView = "users.view"
+const UsersEdit = "users.edit"
 
-func DefaultForServer() []string {
+func ServersDefaultUser() []string {
 	return []string{
-		ViewServers,
-		ServerConsole,
-		StopServers,
-		StartServers,
-		KillServers,
-		StatServers,
-		FilesServers,
-		GetFilesServers,
-		PutFilesServers,
-		InstallServers,
-		ServerSendConsole,
-		EditServers,
-		EditServerUsers,
+		ServersView,
+		ServersEdit,
+		ServersInstall,
+		ServersConsole,
+		ServersConsoleSend,
+		ServersStop,
+		ServersStart,
+		ServersStat,
+		ServersFiles,
+		ServersFilesGet,
+		ServersFilesPut,
+		ServersEditUsers,
+	}
+}
+
+func DefaultAdmin() []string {
+	return []string{
+		ServersAdmin,
+		NodesView,
+		NodesEdit,
+		NodesDeploy,
+		TemplatesView,
+		UsersView,
+		UsersEdit,
+		ServersCreate,
+		ServersDelete,
+		ServersEditAdmin,
 	}
 }
