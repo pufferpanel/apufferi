@@ -13,11 +13,14 @@
 
 package response
 
-import "github.com/pufferpanel/apufferi"
+import (
+	"github.com/gin-gonic/gin"
+	"github.com/pufferpanel/apufferi"
+)
 
 type responseBuilder struct {
 	response *Response
-	context  Context
+	context  *gin.Context
 	discard  bool
 	sent     bool
 }
@@ -47,11 +50,11 @@ type Builder interface {
 	Discard() Builder
 }
 
-func Respond(c Context) Builder {
+func Respond(c *gin.Context) Builder {
 	return From(c)
 }
 
-func From(c Context) Builder {
+func From(c *gin.Context) Builder {
 	val := c.Value("response")
 	if val == nil {
 		return &responseBuilder{
@@ -165,9 +168,4 @@ type Paging struct {
 	Size    uint `json:"pageSize,omitempty"`
 	MaxSize uint `json:"maxSize,omitempty"`
 	Total   uint `json:"total,omitempty"`
-}
-
-type Context interface {
-	JSON(code int, body interface{})
-	Value(key interface{}) interface{}
 }
