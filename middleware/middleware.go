@@ -16,8 +16,8 @@ package middleware
 import (
 	"database/sql"
 	"github.com/gin-gonic/gin"
-	"github.com/pufferpanel/apufferi/logging"
-	"github.com/pufferpanel/apufferi/response"
+	"github.com/pufferpanel/apufferi/v3/logging"
+	"github.com/pufferpanel/apufferi/v3/response"
 	"runtime/debug"
 )
 

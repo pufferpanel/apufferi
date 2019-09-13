@@ -15,7 +15,7 @@ package response
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/pufferpanel/apufferi"
+	"github.com/pufferpanel/apufferi/v3"
 )
 
 type responseBuilder struct {
