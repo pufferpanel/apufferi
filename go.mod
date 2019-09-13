@@ -1,4 +1,4 @@
-module github.com/pufferpanel/apufferi/v2
+module github.com/pufferpanel/apufferi/v3
 
 go 1.12
 
