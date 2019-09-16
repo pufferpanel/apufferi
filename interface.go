@@ -18,6 +18,9 @@ import (
 )
 
 func ToStringArray(element interface{}) []string {
+	if element == nil {
+		return nil
+	}
 	switch element.(type) {
 	case string:
 		return []string{element.(string)}
