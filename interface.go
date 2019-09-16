@@ -13,6 +13,10 @@
 
 package apufferi
 
+import (
+	"fmt"
+)
+
 func ToStringArray(element interface{}) []string {
 	switch element.(type) {
 	case string:
@@ -22,10 +26,14 @@ func ToStringArray(element interface{}) []string {
 	case []interface{}:
 		var arr = make([]string, 0)
 		for _, element := range element.([]interface{}) {
-			arr = append(arr, element.(string))
+			arr = append(arr, ToString(element))
 		}
 		return arr
 	default:
 		return []string{}
 	}
+}
+
+func ToString(v interface{}) string {
+	return fmt.Sprintf("%v", v)
 }

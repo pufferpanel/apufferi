@@ -21,7 +21,11 @@ func GetStringOrDefault(data map[string]interface{}, key string, def string) str
 	if section == nil {
 		return def
 	} else {
-		return section.(string)
+		val, ok := section.(string)
+		if !ok {
+			return def
+		}
+		return val
 	}
 }
 
@@ -33,52 +37,64 @@ func GetBooleanOrDefault(data map[string]interface{}, key string, def bool) bool
 	if section == nil {
 		return def
 	} else {
-		return section.(bool)
+		val, ok := section.(bool)
+		if !ok {
+			return def
+		}
+		return val
 	}
 }
 
 func GetMapOrNull(data map[string]interface{}, key string) map[string]interface{} {
 	if data == nil {
-		return (map[string]interface{})(nil)
+		return nil
 	}
 	var section = data[key]
 	if section == nil {
-		return (map[string]interface{})(nil)
+		return nil
 	} else {
-		return section.(map[string]interface{})
+		val, ok := section.(map[string]interface{})
+		if !ok {
+			return nil
+		}
+		return val
 	}
 }
 
 func GetObjectArrayOrNull(data map[string]interface{}, key string) []interface{} {
 	if data == nil {
-		return ([]interface{})(nil)
+		return nil
 	}
 	var section = data[key]
 	if section == nil {
-		return ([]interface{})(nil)
+		return nil
 	} else {
-		return section.([]interface{})
+		val, ok := section.([]interface{})
+		if !ok {
+			return nil
+		}
+		return val
 	}
 }
 
 func GetStringArrayOrNull(data map[string]interface{}, key string) []string {
 	if data == nil {
-		return ([]string)(nil)
+		return nil
 	}
 	var section = data[key]
 	if section == nil {
-		return ([]string)(nil)
+		return nil
 	} else {
 		v, k := section.([]string)
 		if k {
 			return v
 		} else {
-			var sec = section.([]interface{})
-			var newArr = make([]string, len(sec))
-			for i := 0; i < len(sec); i++ {
-				newArr[i] = sec[i].(string)
+			sec, ok := section.([]interface{})
+			if !ok {
+				return nil
 			}
-			return newArr
+
+			return ToStringArray(sec)
 		}
 	}
 }
