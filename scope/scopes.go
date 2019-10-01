@@ -13,71 +13,42 @@
 
 package scope
 
-//generic
-const Login = "login"
+type Scope string
 
-//oauth2
-const OAuth2Info = "oauth2.info"
+const (
+	//generic
+	Login = Scope("login")
 
-//server
-const ServersAdmin = "servers.admin"
-const ServersView = "servers.view"
-const ServersEdit = "servers.edit"
-const ServersEditAdmin = "servers.edit.admin"
-const ServersEditUsers = "servers.edit.users"
-const ServersCreate = "servers.create"
-const ServersDelete = "servers.delete"
+	OAuth2Auth = Scope("oauth2.auth")
 
-const ServersInstall = "servers.install"
-const ServersConsole = "servers.console"
-const ServersConsoleSend = "servers.console.send"
-const ServersStop = "servers.stop"
-const ServersStart = "servers.start"
-const ServersStat = "servers.stats"
-const ServersFiles = "servers.files"
-const ServersFilesGet = "servers.files.get"
-const ServersFilesPut = "servers.files.put"
+	//server
+	ServersAdmin       = Scope("servers.admin")
+	ServersView        = Scope("servers.view")
+	ServersEdit        = Scope("servers.edit")
+	ServersEditAdmin   = Scope("servers.edit.admin")
+	ServersEditUsers   = Scope("servers.edit.users")
+	ServersCreate      = Scope("servers.create")
+	ServersDelete      = Scope("servers.delete")
+	ServersInstall     = Scope("servers.install")
+	ServersUpdate      = Scope("servers.update")
+	ServersConsole     = Scope("servers.console")
+	ServersConsoleSend = Scope("servers.console.send")
+	ServersStop        = Scope("servers.stop")
+	ServersStart       = Scope("servers.start")
+	ServersStat        = Scope("servers.stats")
+	ServersSFTP        = Scope("servers.sftp")
+	ServersFilesGet    = Scope("servers.files.get")
+	ServersFilesPut    = Scope("servers.files.put")
 
-//node
-const NodesView = "nodes.view"
-const NodesEdit = "nodes.edit"
-const NodesDeploy = "nodes.deploy"
+	//node
+	NodesView   = Scope("nodes.view")
+	NodesEdit   = Scope("nodes.edit")
+	NodesDeploy = Scope("nodes.deploy")
 
-//template
-const TemplatesView = "templates.view"
+	//template
+	TemplatesView = Scope("templates.view")
 
-//user
-const UsersView = "users.view"
-const UsersEdit = "users.edit"
-
-func ServersDefaultUser() []string {
-	return []string{
-		ServersView,
-		ServersEdit,
-		ServersInstall,
-		ServersConsole,
-		ServersConsoleSend,
-		ServersStop,
-		ServersStart,
-		ServersStat,
-		ServersFiles,
-		ServersFilesGet,
-		ServersFilesPut,
-		ServersEditUsers,
-	}
-}
-
-func DefaultAdmin() []string {
-	return []string{
-		ServersAdmin,
-		NodesView,
-		NodesEdit,
-		NodesDeploy,
-		TemplatesView,
-		UsersView,
-		UsersEdit,
-		ServersCreate,
-		ServersDelete,
-		ServersEditAdmin,
-	}
-}
+	//user
+	UsersView = Scope("users.view")
+	UsersEdit = Scope("users.edit")
+)

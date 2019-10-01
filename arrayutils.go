@@ -21,3 +21,15 @@ func ContainsValue(arr []string, value string) bool {
 	}
 	return false
 }
+
+func Contains(arr interface{}, value interface{}) bool {
+	if list, ok := arr.([]interface{}); ok {
+		for _, v := range list {
+			if v == value {
+				return true
+			}
+		}
+	}
+
+	return false
+}
