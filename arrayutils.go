@@ -13,7 +13,14 @@
 
 package apufferi
 
+import "github.com/pufferpanel/apufferi/v3/scope"
+
+//Deprecated: Use ContainsString instead
 func ContainsValue(arr []string, value string) bool {
+	return ContainsString(arr, value)
+}
+
+func ContainsString(arr []string, value string) bool {
 	for _, v := range arr {
 		if v == value {
 			return true
@@ -22,12 +29,10 @@ func ContainsValue(arr []string, value string) bool {
 	return false
 }
 
-func Contains(arr interface{}, value interface{}) bool {
-	if list, ok := arr.([]interface{}); ok {
-		for _, v := range list {
-			if v == value {
-				return true
-			}
+func ContainsScope(arr []scope.Scope, value scope.Scope) bool {
+	for _, v := range arr {
+		if v == value || v == scope.ServersAdmin {
+			return true
 		}
 	}
 
