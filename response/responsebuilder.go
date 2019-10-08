@@ -18,114 +18,89 @@ import (
 	"github.com/pufferpanel/apufferi/v3"
 )
 
-type responseBuilder struct {
-	response *Response
-	context  *gin.Context
-	discard  bool
-	sent     bool
+type Builder struct {
+	Response    *Response
+	Context     *gin.Context
+	IsDiscarded bool
+	IsSent      bool
 }
 
-type Builder interface {
-	Send()
-
-	Status(status int) Builder
-	WithStatus(status int) Builder
-
-	Message(message string) Builder
-	WithMessage(message string) Builder
-
-	Data(data interface{}) Builder
-	WithData(data interface{}) Builder
-
-	Error(err error) Builder
-	WithError(err error) Builder
-
-	Fail() Builder
-	Success() Builder
-	WithSuccess(success bool) Builder
-
-	PageInfo(page, pageSize, maxSize, total uint) Builder
-	WithPageInfo(page, pageSize, maxSize, total uint) Builder
-
-	Discard() Builder
-}
-
-func Respond(c *gin.Context) Builder {
+func Respond(c *gin.Context) *Builder {
 	return From(c)
 }
 
-func From(c *gin.Context) Builder {
+func From(c *gin.Context) *Builder {
 	val := c.Value("response")
 	if val == nil {
-		return &responseBuilder{
-			response: &Response{
+		return &Builder{
+			Response: &Response{
 				Success: true,
 				Status:  200,
 			},
-			context: c,
+			Context: c,
 		}
 	} else {
-		return val.(Builder)
+		return val.(*Builder)
 	}
 }
 
-func (rb *responseBuilder) Status(status int) Builder {
+func (rb *Builder) Status(status int) *Builder {
 	return rb.WithStatus(status)
 }
 
-func (rb *responseBuilder) WithStatus(status int) Builder {
-	rb.response.Status = status
+func (rb *Builder) WithStatus(status int) *Builder {
+	rb.Response.Status = status
 	if status > 299 || status < 200 {
 		return rb.Fail()
 	}
 	return rb
 }
 
-func (rb *responseBuilder) Message(message string) Builder {
+func (rb *Builder) Message(message string) *Builder {
 	return rb.WithMessage(message)
 }
 
-func (rb *responseBuilder) WithMessage(message string) Builder {
-	rb.response.Message = message
+func (rb *Builder) WithMessage(message string) *Builder {
+	rb.Response.Message = message
 	return rb
 }
 
-func (rb *responseBuilder) Data(data interface{}) Builder {
+func (rb *Builder) Data(data interface{}) *Builder {
 	return rb.WithData(data)
 }
 
-func (rb *responseBuilder) WithData(data interface{}) Builder {
-	rb.response.Data = data
+func (rb *Builder) WithData(data interface{}) *Builder {
+	rb.Response.Data = data
 	return rb
 }
 
-func (rb *responseBuilder) Fail() Builder {
+func (rb *Builder) Fail() *Builder {
 	return rb.WithSuccess(false)
 }
 
-func (rb *responseBuilder) Success() Builder {
+func (rb *Builder) Success() *Builder {
 	return rb.WithSuccess(true)
 }
 
-func (rb *responseBuilder) WithSuccess(success bool) Builder {
-	rb.response.Success = success
+func (rb *Builder) WithSuccess(success bool) *Builder {
+	rb.Response.Success = success
 	return rb
 }
 
-func (rb *responseBuilder) Send() {
-	if rb.discard || rb.sent {
+func (rb *Builder) Send() {
+	if rb.IsDiscarded || rb.IsSent {
 		return
 	}
-	rb.sent = true
-	rb.context.JSON(rb.response.Status, rb.response)
+	rb.IsSent = true
+	rb.Context.JSON(rb.Response.Status, rb.Response)
 }
 
-func (rb *responseBuilder) PageInfo(page, pageSize, maxSize, total uint) Builder {
+func (rb *Builder) PageInfo(page, pageSize, maxSize, total uint) *Builder {
 	return rb.WithPageInfo(page, pageSize, maxSize, total)
 }
 
-func (rb *responseBuilder) WithPageInfo(page, pageSize, maxSize, total uint) Builder {
-	rb.response.Metadata = &Metadata{
+func (rb *Builder) WithPageInfo(page, pageSize, maxSize, total uint) *Builder {
+	rb.Response.Metadata = &Metadata{
 		Paging: &Paging{
 			Page:    page,
 			Size:    pageSize,
@@ -135,18 +110,18 @@ func (rb *responseBuilder) WithPageInfo(page, pageSize, maxSize, total uint) Bui
 	return rb
 }
 
-func (rb *responseBuilder) Error(err error) Builder {
+func (rb *Builder) Error(err error) *Builder {
 	return rb.WithError(err)
 }
 
-func (rb *responseBuilder) WithError(err error) Builder {
-	rb.response.Error = apufferi.FromError(err)
+func (rb *Builder) WithError(err error) *Builder {
+	rb.Response.Error = apufferi.FromError(err)
 
 	return rb.Fail()
 }
 
-func (rb *responseBuilder) Discard() Builder {
-	rb.discard = true
+func (rb *Builder) Discard() *Builder {
+	rb.IsDiscarded = true
 	return rb
 }
 

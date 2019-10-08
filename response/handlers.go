@@ -43,7 +43,7 @@ func CreateOptions(options ...string) gin.HandlerFunc {
 	}
 }
 
-func HandleError(res Builder, err error) bool {
+func HandleError(res *Builder, err error) bool {
 	if err != nil {
 		res.Fail().Status(http.StatusInternalServerError).Error(err)
 		logging.Build(logging.ERROR).WithError(err).Log()

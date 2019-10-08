@@ -23,7 +23,7 @@ import (
 
 func ResponseAndRecover(c *gin.Context) {
 	defer func() {
-		result := c.Value("response").(response.Builder)
+		result := response.From(c)
 
 		if err := recover(); err != nil {
 			result.Fail().Status(500).Message("unexpected error").Data(err)
@@ -33,6 +33,7 @@ func ResponseAndRecover(c *gin.Context) {
 
 		result.Send()
 	}()
+
 	c.Set("response", response.Respond(c))
 
 	c.Next()
