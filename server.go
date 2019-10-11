@@ -25,14 +25,19 @@ type Server struct {
 }
 
 type Variable struct {
-	Description  string      `json:"desc,omitempty"`
-	Display      string      `json:"display,omitempty"`
-	Internal     bool        `json:"internal,omitempty"`
-	Required     bool        `json:"required,omitempty"`
-	Value        interface{} `json:"value,omitempty"`
-	UserEditable bool        `json:"userEdit,omitempty"`
-	Type         string      `json:"type,omitempty"`
-	Options      []string    `json:"options,omitempty"`
+	Description  string           `json:"desc,omitempty"`
+	Display      string           `json:"display,omitempty"`
+	Internal     bool             `json:"internal,omitempty"`
+	Required     bool             `json:"required,omitempty"`
+	Value        interface{}      `json:"value,omitempty"`
+	UserEditable bool             `json:"userEdit,omitempty"`
+	Type         string           `json:"type,omitempty"`
+	Options      []VariableOption `json:"options,omitempty"`
+}
+
+type VariableOption struct {
+	Value   string `json:"value"`
+	Display string `json:"display"`
 }
 
 type Execution struct {
