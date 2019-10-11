@@ -49,11 +49,6 @@ type Execution struct {
 	EnvironmentVariables    map[string]string  `json:"environmentVars,omitempty"`
 }
 
-type TypeWithMetadata struct {
-	Type     string                 `json:"type,omitempty"`
-	Metadata map[string]interface{} `json:"metadata,omitempty"`
-}
-
 type Template struct {
 	Server
 	SupportedEnvironments []TypeWithMetadata `json:"supportedEnvironments,omitEmpty"`
