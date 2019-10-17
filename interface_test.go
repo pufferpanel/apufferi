@@ -75,7 +75,7 @@ func TestToStringArray(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := ToStringArray(tt.args.element); !reflect.DeepEqual(got, tt.want) {
+			if got, err := Convert(tt.args.element, []string{}); err != nil || !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("ToStringArray() = %v, want %v", got, tt.want)
 			}
 		})

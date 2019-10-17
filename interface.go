@@ -15,26 +15,12 @@ package apufferi
 
 import (
 	"fmt"
+	"github.com/spf13/cast"
 )
 
+//DEPRECATED: Use conversion library
 func ToStringArray(element interface{}) []string {
-	if element == nil {
-		return nil
-	}
-	switch element.(type) {
-	case string:
-		return []string{element.(string)}
-	case []string:
-		return element.([]string)
-	case []interface{}:
-		var arr = make([]string, 0)
-		for _, element := range element.([]interface{}) {
-			arr = append(arr, ToString(element))
-		}
-		return arr
-	default:
-		return []string{}
-	}
+	return cast.ToStringSlice(element)
 }
 
 func ToString(v interface{}) string {

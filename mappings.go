@@ -13,6 +13,8 @@
 
 package apufferi
 
+import "github.com/spf13/cast"
+
 func GetStringOrDefault(data map[string]interface{}, key string, def string) string {
 	if data == nil {
 		return def
@@ -21,8 +23,8 @@ func GetStringOrDefault(data map[string]interface{}, key string, def string) str
 	if section == nil {
 		return def
 	} else {
-		val, ok := section.(string)
-		if !ok {
+		val, err := cast.ToStringE(section)
+		if err != nil {
 			return def
 		}
 		return val
@@ -37,8 +39,8 @@ func GetBooleanOrDefault(data map[string]interface{}, key string, def bool) bool
 	if section == nil {
 		return def
 	} else {
-		val, ok := section.(bool)
-		if !ok {
+		val, err := cast.ToBoolE(section)
+		if err != nil {
 			return def
 		}
 		return val
@@ -53,8 +55,8 @@ func GetMapOrNull(data map[string]interface{}, key string) map[string]interface{
 	if section == nil {
 		return nil
 	} else {
-		val, ok := section.(map[string]interface{})
-		if !ok {
+		val, err := cast.ToStringMapE(section)
+		if err != nil {
 			return nil
 		}
 		return val
@@ -69,8 +71,8 @@ func GetObjectArrayOrNull(data map[string]interface{}, key string) []interface{}
 	if section == nil {
 		return nil
 	} else {
-		val, ok := section.([]interface{})
-		if !ok {
+		val, err := cast.ToSliceE(section)
+		if err != nil {
 			return nil
 		}
 		return val
@@ -85,16 +87,10 @@ func GetStringArrayOrNull(data map[string]interface{}, key string) []string {
 	if section == nil {
 		return nil
 	} else {
-		v, k := section.([]string)
-		if k {
-			return v
-		} else {
-			sec, ok := section.([]interface{})
-			if !ok {
-				return nil
-			}
-
-			return ToStringArray(sec)
+		val, err := cast.ToStringSliceE(section)
+		if err != nil {
+			return nil
 		}
+		return val
 	}
 }
