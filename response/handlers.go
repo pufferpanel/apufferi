@@ -15,6 +15,7 @@ package response
 
 import (
 	"github.com/gin-gonic/gin"
+	"github.com/jinzhu/gorm"
 	"github.com/pufferpanel/apufferi/v3/logging"
 	"net/http"
 	"strings"
@@ -45,9 +46,16 @@ func CreateOptions(options ...string) gin.HandlerFunc {
 
 func HandleError(res *Builder, err error) bool {
 	if err != nil {
-		res.Fail().Status(http.StatusInternalServerError).Error(err)
 		logging.Build(logging.ERROR).WithError(err).Log()
+
+		if gorm.IsRecordNotFoundError(err) {
+			res.Fail().Status(http.StatusNotFound)
+		} else {
+			res.Fail().Status(http.StatusInternalServerError).Error(err)
+		}
+
 		return true
 	}
+
 	return false
 }

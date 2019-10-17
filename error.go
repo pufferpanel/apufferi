@@ -68,8 +68,5 @@ func FromError(err error) Error {
 	if e, ok := err.(Error); e != nil && ok {
 		return e
 	}
-	return genericError{
-		Message: err.Error(),
-		Code:    "ErrGeneric",
-	}
+	return CreateError(err.Error(), "ErrGeneric")
 }
