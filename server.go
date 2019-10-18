@@ -44,7 +44,7 @@ type Execution struct {
 	Arguments               []string           `json:"arguments,omitempty"`
 	ProgramName             string             `json:"program,omitempty"`
 	StopCommand             string             `json:"stop,omitempty"`
-	Enabled                 bool               `json:"enabled,omitempty"`
+	Disabled                bool               `json:"disabled,omitempty"`
 	AutoStart               bool               `json:"autostart,omitempty"`
 	AutoRestartFromCrash    bool               `json:"autorecover,omitempty"`
 	AutoRestartFromGraceful bool               `json:"autorestart,omitempty"`
