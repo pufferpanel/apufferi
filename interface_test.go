@@ -1,6 +1,7 @@
 package apufferi
 
 import (
+	"errors"
 	"reflect"
 	"testing"
 )
@@ -25,17 +26,22 @@ func TestToStringArray(t *testing.T) {
 	type args struct {
 		element interface{}
 	}
+	type wants struct {
+		result []string
+		err    error
+	}
+
 	tests := []struct {
 		name string
 		args args
-		want []string
+		want wants
 	}{
-		{
+		/*{
 			name: "Test null input",
 			args: args{
 				element: nil,
 			},
-			want: nil,
+			want: []string{},
 		},
 		{
 			name: "Test empty input",
@@ -64,19 +70,26 @@ func TestToStringArray(t *testing.T) {
 				element: "test",
 			},
 			want: []string{"test"},
-		},
+		},*/
 		{
 			name: "Test invalid type",
 			args: args{
 				element: interfaceInvalid,
 			},
-			want: []string{},
+			want: wants{
+				nil,
+				errors.New("unable to cast map[string]string{\"invalid\":\"input\"} of type map[string]string to []string"),
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got, err := Convert(tt.args.element, []string{}); err != nil || !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("ToStringArray() = %v, want %v", got, tt.want)
+			if got, err := Convert(tt.args.element, []string{}); (err != nil && tt.want.err.Error() != err.Error()) || !reflect.DeepEqual(got, tt.want.result) {
+				if tt.want.err != nil {
+					t.Errorf("ToStringArray() = %v, expected %v", err, tt.want.err)
+				} else {
+					t.Errorf("ToStringArray() = %v, want %v", got, tt.want.result)
+				}
 			}
 		})
 	}

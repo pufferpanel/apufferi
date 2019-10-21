@@ -28,8 +28,8 @@ var mappingMixedArrayKey = "mixedArray"
 var mappingMapKey = "mapKey"
 var mappingObjectArrayKey = "objectKey"
 
+var trueString = "true"
 var mappingDefaultString = "someDefault"
-
 var mappingStringVal = "someValue"
 
 var mappingStringArrayVal = []string{
@@ -299,7 +299,7 @@ func TestGetStringOrDefault(t *testing.T) {
 				key:  mappingTrueBoolKey,
 				def:  mappingDefaultString,
 			},
-			want: mappingDefaultString,
+			want: trueString,
 		},
 	}
 	for _, tt := range tests {
