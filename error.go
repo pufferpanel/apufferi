@@ -13,59 +13,48 @@
 
 package apufferi
 
-type Error interface {
-	error
-
-	GetMessage() string
-
-	GetCode() string
-
-	Is(Error) bool
-
-	Metadata(metadata map[string]interface{}) Error
-}
-
-type genericError struct {
+type Error struct {
 	Message string                 `json:"msg,omitempty"`
 	Code    string                 `json:"code,omitempty"`
 	Meta    map[string]interface{} `json:"metadata,omitempty"`
+	error
 }
 
-func (ge genericError) GetMessage() string {
+func (ge *Error) GetMessage() string {
 	return ReplaceTokens(ge.Message, ge.Meta)
 }
 
-func (ge genericError) GetCode() string {
+func (ge *Error) GetCode() string {
 	return ge.Code
 }
 
-func (ge genericError) Error() string {
+func (ge *Error) Error() string {
 	return ge.GetMessage()
 }
 
-func (ge genericError) Is(err Error) bool {
+func (ge *Error) Is(err *Error) bool {
 	return ge.GetCode() == err.GetCode()
 }
 
-func (ge genericError) Metadata(metadata map[string]interface{}) Error {
+func (ge *Error) Metadata(metadata map[string]interface{}) *Error {
 	cp := ge
 	cp.Meta = metadata
 	return cp
 }
 
-func CreateError(msg, code string) Error {
-	return genericError{
+func CreateError(msg, code string) *Error {
+	return &Error{
 		Message: msg,
 		Code:    code,
 	}
 }
 
-func FromError(err error) Error {
+func FromError(err error) *Error {
 	if err == nil {
 		return nil
 	}
 
-	if e, ok := err.(Error); e != nil && ok {
+	if e, ok := err.(*Error); ok {
 		return e
 	}
 	return CreateError(err.Error(), "ErrGeneric")

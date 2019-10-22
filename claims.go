@@ -3,7 +3,7 @@ package apufferi
 import (
 	"crypto/ecdsa"
 	"github.com/dgrijalva/jwt-go"
-	"github.com/pufferpanel/apufferi/v3/scope"
+	"github.com/pufferpanel/apufferi/v4/scope"
 )
 
 type Claim struct {

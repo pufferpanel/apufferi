@@ -15,13 +15,7 @@ package apufferi
 
 import (
 	"fmt"
-	"github.com/spf13/cast"
 )
-
-//DEPRECATED: Use conversion library
-func ToStringArray(element interface{}) []string {
-	return cast.ToStringSlice(element)
-}
 
 func ToString(v interface{}) string {
 	return fmt.Sprintf("%v", v)

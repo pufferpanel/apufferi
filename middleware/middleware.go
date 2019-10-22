@@ -15,26 +15,28 @@ package middleware
 
 import (
 	"database/sql"
+	"errors"
 	"github.com/gin-gonic/gin"
-	"github.com/pufferpanel/apufferi/v3/logging"
-	"github.com/pufferpanel/apufferi/v3/response"
+	"github.com/pufferpanel/apufferi/v4"
+	"github.com/pufferpanel/apufferi/v4/logging"
+	"github.com/pufferpanel/apufferi/v4/response"
+	"net/http"
 	"runtime/debug"
 )
 
 func ResponseAndRecover(c *gin.Context) {
 	defer func() {
-		result := response.From(c)
 
 		if err := recover(); err != nil {
-			result.Fail().Status(500).Message("unexpected error").Data(err)
+			if _, ok := err.(error); !ok {
+				err = errors.New(apufferi.ToString(err))
+			}
+			response.HandleError(c, err.(error), http.StatusInternalServerError)
+
 			logging.Error("Error handling route\n%+v\n%s", err, debug.Stack())
 			c.Abort()
 		}
-
-		result.Send()
 	}()
-
-	c.Set("response", response.Respond(c))
 
 	c.Next()
 }

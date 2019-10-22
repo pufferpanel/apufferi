@@ -16,13 +16,19 @@ package response
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
-	"github.com/pufferpanel/apufferi/v3/logging"
+	"github.com/pufferpanel/apufferi/v4"
+	"github.com/pufferpanel/apufferi/v4/logging"
 	"net/http"
 	"strings"
 )
 
 func NotImplemented(c *gin.Context) {
-	From(c).Fail().Status(http.StatusNotImplemented).Message("not implemented")
+	c.AbortWithStatusJSON(http.StatusNotImplemented, &Error{
+		Error: &apufferi.Error{
+			Message: "not implemented",
+			Code:    "ErrNotImplemented",
+		},
+	})
 }
 
 func CreateOptions(options ...string) gin.HandlerFunc {
@@ -39,19 +45,18 @@ func CreateOptions(options ...string) gin.HandlerFunc {
 		c.Header("Access-Control-Allow-Headers", "authorization, origin, content-type, accept")
 		c.Header("Allow", res)
 		c.Header("Content-Type", "application/json")
-		From(c).Discard()
 		c.AbortWithStatus(http.StatusOK)
 	}
 }
 
-func HandleError(res *Builder, err error) bool {
+func HandleError(c *gin.Context, err error, statusCode int) bool {
 	if err != nil {
 		logging.Build(logging.ERROR).WithError(err).Log()
 
 		if gorm.IsRecordNotFoundError(err) {
-			res.Fail().Status(http.StatusNotFound)
+			c.AbortWithStatus(404)
 		} else {
-			res.Fail().Status(http.StatusInternalServerError).Error(err)
+			c.AbortWithStatusJSON(statusCode, &Error{Error: apufferi.FromError(err)})
 		}
 
 		return true

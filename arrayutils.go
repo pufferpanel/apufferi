@@ -13,12 +13,7 @@
 
 package apufferi
 
-import "github.com/pufferpanel/apufferi/v3/scope"
-
-//Deprecated: Use ContainsString instead
-func ContainsValue(arr []string, value string) bool {
-	return ContainsString(arr, value)
-}
+import "github.com/pufferpanel/apufferi/v4/scope"
 
 func ContainsString(arr []string, value string) bool {
 	for _, v := range arr {
