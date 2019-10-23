@@ -16,3 +16,6 @@ type Paging struct {
 	MaxSize uint `json:"maxSize,omitempty"`
 	Total   uint `json:"total,omitempty"`
 }
+
+type Empty struct {
+}
