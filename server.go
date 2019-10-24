@@ -36,7 +36,7 @@ type Variable struct {
 }
 
 type VariableOption struct {
-	Value   string `json:"value"`
+	Value   interface{} `json:"value"`
 	Display string `json:"display"`
 }
 
