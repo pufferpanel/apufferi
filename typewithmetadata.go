@@ -9,8 +9,8 @@ import (
 
 //designed to be overridden
 type TypeWithMetadata struct {
-	Type     string `json:"type,omitempty"`
-	Metadata map[string]interface{}
+	Type     string                 `json:"type,omitempty"`
+	Metadata map[string]interface{} `json:"-,omitempty"`
 }
 
 //parses a type with this declaration, storing what it needs into metadata and type
@@ -31,6 +31,15 @@ func (t *TypeWithMetadata) UnmarshalJSON(bs []byte) (err error) {
 
 	delete(t.Metadata, "type")
 	return
+}
+
+func (t *TypeWithMetadata) MarshalJSON() ([]byte, error) {
+	newMapping := make(map[string]interface{})
+	for k, v := range t.Metadata {
+		newMapping[k] = v
+	}
+	newMapping["type"] = t.Type
+	return json.Marshal(newMapping)
 }
 
 //Parses the metadata into the target interface
