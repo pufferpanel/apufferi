@@ -14,9 +14,18 @@
 package apufferi
 
 import (
+	"encoding/json"
 	"fmt"
 )
 
 func ToString(v interface{}) string {
 	return fmt.Sprintf("%v", v)
+}
+
+func UnmarshalTo(source, target interface{}) error {
+	data, err := json.Marshal(source)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(data, target)
 }

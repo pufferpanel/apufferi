@@ -16,9 +16,9 @@ package apufferi
 type Server struct {
 	Variables      map[string]Variable `json:"data,omitempty"`
 	Display        string              `json:"display,omitempty"`
-	Environment    TypeWithMetadata    `json:"environment,omitempty"`
-	Installation   []TypeWithMetadata  `json:"install,omitempty"`
-	Uninstallation []TypeWithMetadata  `json:"uninstall,omitempty"`
+	Environment    interface{}         `json:"environment,omitempty"`
+	Installation   []interface{}       `json:"install,omitempty"`
+	Uninstallation []interface{}       `json:"uninstall,omitempty"`
 	Type           string              `json:"type,omitempty"`
 	Identifier     string              `json:"id,omitempty"`
 	Execution      Execution           `json:"run,omitempty"`
@@ -37,24 +37,28 @@ type Variable struct {
 
 type VariableOption struct {
 	Value   interface{} `json:"value"`
-	Display string `json:"display"`
+	Display string      `json:"display"`
 }
 
 type Execution struct {
-	Arguments               []string           `json:"arguments,omitempty"`
-	ProgramName             string             `json:"program,omitempty"`
-	StopCommand             string             `json:"stop,omitempty"`
-	Disabled                bool               `json:"disabled,omitempty"`
-	AutoStart               bool               `json:"autostart,omitempty"`
-	AutoRestartFromCrash    bool               `json:"autorecover,omitempty"`
-	AutoRestartFromGraceful bool               `json:"autorestart,omitempty"`
-	PreExecution            []TypeWithMetadata `json:"pre,omitempty"`
-	PostExecution           []TypeWithMetadata `json:"post,omitempty"`
-	StopCode                int                `json:"stopCode,omitempty"`
-	EnvironmentVariables    map[string]string  `json:"environmentVars,omitempty"`
+	Arguments               []string          `json:"arguments,omitempty"`
+	ProgramName             string            `json:"program,omitempty"`
+	StopCommand             string            `json:"stop,omitempty"`
+	Disabled                bool              `json:"disabled,omitempty"`
+	AutoStart               bool              `json:"autostart,omitempty"`
+	AutoRestartFromCrash    bool              `json:"autorecover,omitempty"`
+	AutoRestartFromGraceful bool              `json:"autorestart,omitempty"`
+	PreExecution            []interface{}     `json:"pre,omitempty"`
+	PostExecution           []interface{}     `json:"post,omitempty"`
+	StopCode                int               `json:"stopCode,omitempty"`
+	EnvironmentVariables    map[string]string `json:"environmentVars,omitempty"`
 }
 
 type Template struct {
 	Server
-	SupportedEnvironments []TypeWithMetadata `json:"supportedEnvironments,omitEmpty"`
+	SupportedEnvironments []interface{} `json:"supportedEnvironments,omitEmpty"`
+}
+
+type Type struct {
+	Type string `json:"type"`
 }
