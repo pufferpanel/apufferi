@@ -132,10 +132,10 @@ func Log(lvl *Level, msg string, data ...interface{}) {
 		data:    data,
 	}
 
+	wg.Add(1)
 	if Async {
 		//sends the log message to the channel
 		//this is not blocking, but won't stop execution if somehow the buffer is full
-		wg.Add(1)
 		input <- logMsg
 	} else {
 		runLogMessage(logMsg)

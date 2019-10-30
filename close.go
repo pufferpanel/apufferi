@@ -13,10 +13,14 @@
 
 package apufferi
 
-import "io"
+import (
+	"io"
+	"reflect"
+)
 
 func Close(closer io.Closer) {
-	if closer != nil {
-		closer.Close()
+	//because somehow if it's nil... this fails
+	if closer != nil && reflect.ValueOf(closer).Kind() != reflect.Ptr && reflect.ValueOf(closer).IsNil() {
+		_ = closer.Close()
 	}
 }
