@@ -15,6 +15,7 @@ package logging
 
 import (
 	"fmt"
+	"github.com/pufferpanel/apufferi/v4"
 	"io"
 	"log"
 	"os"
@@ -27,6 +28,8 @@ const (
 	format     = "[%s] [%s] %s\n"
 	timeFormat = "15:04:05"
 )
+
+var Async = false
 
 type logWriter struct {
 	writer io.Writer
@@ -54,11 +57,13 @@ func init() {
 
 	log.SetOutput(AsWriter(INFO))
 
-	go func() {
-		for {
-			runLogMessage(<-input)
-		}
-	}()
+	if Async {
+		go func() {
+			for {
+				runLogMessage(<-input)
+			}
+		}()
+	}
 }
 
 func WithWriter(writer io.Writer, lvl *Level) {
@@ -81,7 +86,7 @@ func Close() {
 	wg.Wait()
 	for _, v := range writers {
 		if closer, ok := v.writer.(io.WriteCloser); ok {
-			closer.Close()
+			apufferi.Close(closer)
 		}
 	}
 }
@@ -127,10 +132,14 @@ func Log(lvl *Level, msg string, data ...interface{}) {
 		data:    data,
 	}
 
-	//sends the log message to the channel
-	//this is not blocking, but won't stop execution if somehow the buffer is full
-	wg.Add(1)
-	input <- logMsg
+	if Async {
+		//sends the log message to the channel
+		//this is not blocking, but won't stop execution if somehow the buffer is full
+		wg.Add(1)
+		input <- logMsg
+	} else {
+		runLogMessage(logMsg)
+	}
 }
 
 func Build(lvl *Level) Builder {
